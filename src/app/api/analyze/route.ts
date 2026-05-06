@@ -8,7 +8,34 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY || '',
 })
 
+// --- RATE LIMITING BÁSICO EN MEMORIA (Día 10) ---
+const ipRequests = new Map<string, { count: number, resetTime: number }>()
+const MAX_REQUESTS_PER_HOUR = 5
+const ONE_HOUR = 60 * 60 * 1000
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now()
+  const record = ipRequests.get(ip)
+  
+  if (!record || now > record.resetTime) {
+    ipRequests.set(ip, { count: 1, resetTime: now + ONE_HOUR })
+    return true
+  }
+  
+  if (record.count >= MAX_REQUESTS_PER_HOUR) return false
+  
+  record.count++
+  return true
+}
+
+
 export async function POST(req: Request) {
+  // 1. Verificación de Rate Limit (Día 10)
+  const ip = req.headers.get('x-forwarded-for') || '127.0.0.1'
+  if (!checkRateLimit(ip)) {
+    console.error(`[SEGURIDAD] Bloqueo por Rate Limit a la IP: ${ip}`)
+    return NextResponse.json({ error: 'Has superado el límite de intentos por hora. Intenta más tarde.' }, { status: 429 })
+  }
   try {
     const supabase = await createClient()
     
@@ -53,14 +80,14 @@ export async function POST(req: Request) {
     let claudeResponse = ''
     try {
       const message = await anthropic.messages.create({
-        model: 'claude-sonnet-4-6', // Nombre según tu documento
+        model: 'claude-sonnet-4-6', // Nombre exacto que aparece en la consola del usuario
         max_tokens: 1500,
         system: systemPrompt,
         messages: [{ role: 'user', content: userMessage }],
       })
       claudeResponse = message.content[0].type === 'text' ? message.content[0].text : ''
     } catch (apiError: any) {
-      // MODO PRUEBA (MOCK): Si Claude falla por falta de saldo, generamos una respuesta falsa para que puedas probar tu App
+      // MODO PRUEBA (MOCK): Si Claude falla por falta de saldo, generamos una respuesta falsa
       console.warn("Anthropic API falló. Usando modo de prueba (Mock).", apiError.message)
       claudeResponse = `
 📊 PUNTUACIÓN GENERAL: 8/10
@@ -80,15 +107,27 @@ Para trabajar estos puntos estratégicos en profundidad, te recomendamos agendar
 `
     }
 
+    // Extraer el puntaje dinámicamente de la respuesta de Claude usando Regex
+    // Busca patrones como "PUNTUACIÓN GENERAL: 7/10" o "PUNTUACION GENERAL: 9/10"
+    const scoreMatch = claudeResponse.match(/PUNTUACI(?:O|Ó)N GENERAL:\s*(\d+)\/10/i)
+    const puntajeReal = scoreMatch ? parseInt(scoreMatch[1], 10) : 8 // Si no lo encuentra, por defecto 8
+
     // 4. Guardar en Base de Datos
-    // Insertar ensayo
+    // Insertar ensayo (con nombre y email del usuario para trazabilidad)
+    const nombreUsuario = user.user_metadata?.full_name
+      || user.user_metadata?.name
+      || user.email?.split('@')[0]
+      || 'Desconocido'
+
     const { data: ensayoData, error: ensayoError } = await supabase
       .from('ensayos_enviados')
       .insert({
         user_id: user.id,
         contenido: ensayo,
         pais_destino,
-        beca_objetivo
+        beca_objetivo,
+        nombre_usuario: nombreUsuario,
+        email_usuario: user.email ?? null,
       })
       .select()
       .single()
@@ -97,12 +136,12 @@ Para trabajar estos puntos estratégicos en profundidad, te recomendamos agendar
       throw new Error('Error al guardar el ensayo en la base de datos.')
     }
 
-    // Insertar feedback
+    // Insertar feedback con el puntaje real
     await supabase
       .from('feedback_generado')
       .insert({
         ensayo_id: ensayoData.id,
-        puntaje: 8, // En el futuro extraerías esto con Regex del texto
+        puntaje: puntajeReal, 
         raw_response: claudeResponse
       })
 

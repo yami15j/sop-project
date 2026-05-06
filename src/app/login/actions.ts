@@ -16,12 +16,12 @@ export async function login(formData: FormData) {
 
   if (error) {
     // Para simplificar, redirigimos con un error en la URL
-    redirect('/login?error=No se pudo iniciar sesión, verifica tus credenciales')
+    redirect(`/login?error=${encodeURIComponent('No se pudo iniciar sesión. Verifica tus credenciales.')}`)
   }
 
-  // Si todo va bien, mandamos al usuario al dashboard (que crearemos luego)
+  // Si todo va bien, mostramos bienvenida en el dashboard
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  redirect('/dashboard?bienvenido=1')
 }
 
 export async function signup(formData: FormData) {
@@ -35,7 +35,8 @@ export async function signup(formData: FormData) {
   const { error } = await supabase.auth.signUp(data)
 
   if (error) {
-    console.error("Supabase SignUp Error:", error)
+    // Ya no imprimimos el error gigante en consola para mantenerla limpia
+    console.info(`ℹ️ Intento de registro denegado: ${error.message}`)
     redirect(`/login?error=${encodeURIComponent(error.message)}`)
   }
 

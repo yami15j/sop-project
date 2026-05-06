@@ -1,9 +1,9 @@
-import { login, signup } from './actions'
+import { signup } from './actions'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
-export default async function LoginPage({
+export default async function SignupPage({
   searchParams,
 }: {
   searchParams: Promise<{ error: string }>
@@ -39,14 +39,50 @@ export default async function LoginPage({
             />
           </div>
           <h1 className="text-2xl font-extrabold tracking-tight text-[#010B2B]">
-            ¡Bienvenido de vuelta!
+            ¡Únete a la Comunidad!
           </h1>
           <p className="mt-2 text-slate-500 font-medium">
-            Ingresa a tu cuenta para continuar con tus ensayos.
+            Crea tu cuenta gratuita para empezar a evaluar tus ensayos.
           </p>
         </div>
 
         <form className="flex flex-col gap-5" noValidate>
+          {/* Nombre y Apellido en grid */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label
+                htmlFor="nombre"
+                className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-500"
+              >
+                Nombre
+              </label>
+              <input
+                id="nombre"
+                name="nombre"
+                type="text"
+                placeholder="Juan"
+                required
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-slate-900 placeholder-slate-400 outline-none transition-all focus:bg-white focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="apellido"
+                className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-500"
+              >
+                Apellido
+              </label>
+              <input
+                id="apellido"
+                name="apellido"
+                type="text"
+                placeholder="Pérez"
+                required
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-slate-900 placeholder-slate-400 outline-none transition-all focus:bg-white focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]"
+              />
+            </div>
+          </div>
+
           <div>
             <label
               htmlFor="email"
@@ -82,35 +118,30 @@ export default async function LoginPage({
           </div>
 
           {params?.error && (
-            <div className="rounded-2xl bg-red-50 border border-red-100 px-4 py-3.5 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                <span className="text-base">⚠️</span>
-              </div>
-              <p className="text-sm font-medium text-red-700 leading-snug">
-                {decodeURIComponent(params.error)}
-              </p>
+            <div className="rounded-xl bg-red-50 border border-red-200 p-4 text-sm text-red-600 flex items-start gap-2">
+              <span>⚠️</span> {params.error}
             </div>
           )}
 
           <div className="mt-4 flex flex-col gap-4">
             <button
-              formAction={login}
+              formAction={signup}
               className="w-full rounded-xl bg-[#00A8E8] hover:bg-[#0090C7] px-4 py-4 font-bold text-white transition-all shadow-lg shadow-[#00A8E8]/20 hover:-translate-y-0.5 text-lg"
             >
-              Iniciar Sesión
+              Crear mi cuenta gratis
             </button>
 
             <div className="flex items-center gap-3 my-2">
               <div className="h-px bg-slate-200 flex-1"></div>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">¿No tienes cuenta?</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">¿Ya tienes una cuenta?</span>
               <div className="h-px bg-slate-200 flex-1"></div>
             </div>
 
             <Link
-              href="/signup"
+              href="/login"
               className="w-full rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-4 py-3.5 font-bold text-slate-700 transition-all hover:-translate-y-0.5 text-center flex items-center justify-center"
             >
-              Crear cuenta gratis
+              Inicia Sesión
             </Link>
           </div>
         </form>
