@@ -8,7 +8,7 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY || '',
 })
 
-// --- RATE LIMITING BÁSICO EN MEMORIA (Día 10) ---
+// --- RATE LIMITING BÁSICO EN MEMORIA ---
 const ipRequests = new Map<string, { count: number, resetTime: number }>()
 const MAX_REQUESTS_PER_HOUR = 5
 const ONE_HOUR = 60 * 60 * 1000
@@ -16,21 +16,21 @@ const ONE_HOUR = 60 * 60 * 1000
 function checkRateLimit(ip: string): boolean {
   const now = Date.now()
   const record = ipRequests.get(ip)
-  
+
   if (!record || now > record.resetTime) {
     ipRequests.set(ip, { count: 1, resetTime: now + ONE_HOUR })
     return true
   }
-  
+
   if (record.count >= MAX_REQUESTS_PER_HOUR) return false
-  
+
   record.count++
   return true
 }
 
 
 export async function POST(req: Request) {
-  // 1. Verificación de Rate Limit (Día 10)
+  // 1. Verificación de Rate Limit
   const ip = req.headers.get('x-forwarded-for') || '127.0.0.1'
   if (!checkRateLimit(ip)) {
     console.error(`[SEGURIDAD] Bloqueo por Rate Limit a la IP: ${ip}`)
@@ -38,10 +38,10 @@ export async function POST(req: Request) {
   }
   try {
     const supabase = await createClient()
-    
+
     // 0. Autenticación y Límites
     const { data: { user } } = await supabase.auth.getUser()
-    
+
     if (!user) {
       return NextResponse.json({ error: 'No autorizado. Inicia sesión.' }, { status: 401 })
     }
@@ -80,31 +80,26 @@ export async function POST(req: Request) {
     let claudeResponse = ''
     try {
       const message = await anthropic.messages.create({
-        model: 'claude-sonnet-4-6', // Nombre exacto que aparece en la consola del usuario
+        model: 'claude-3-5-sonnet-latest', // Modelo válido de Anthropic
         max_tokens: 1500,
         system: systemPrompt,
         messages: [{ role: 'user', content: userMessage }],
       })
       claudeResponse = message.content[0].type === 'text' ? message.content[0].text : ''
     } catch (apiError: any) {
-      // MODO PRUEBA (MOCK): Si Claude falla por falta de saldo, generamos una respuesta falsa
-      console.warn("Anthropic API falló. Usando modo de prueba (Mock).", apiError.message)
+      console.warn("Anthropic API falló.", apiError.message)
       claudeResponse = `
-📊 PUNTUACIÓN GENERAL: 8/10
+📊 PUNTUACIÓN GENERAL: 0/10
 
-✅ 3 FORTALEZAS:
-1. Tienes un objetivo claro.
-2. Escribes con pasión.
-3. El país de destino hace sentido.
+✅ NOTA IMPORTANTE:
+Hubo un inconveniente técnico al procesar el análisis detallado. Esto puede deberse a un problema temporal de conexión o mantenimiento del sistema.
 
-🔧 3 ÁREAS DE MEJORA:
-1. Podrías ser más específico.
-2. Evita oraciones tan largas.
-3. Conecta más tu historia con la maestría.
+🔧 PRÓXIMOS PASOS:
+1. Reintenta enviar tu ensayo en unos minutos.
+2. Si el problema persiste, contacta al soporte técnico.
 
-💡 RECOMENDACIÓN FINAL:
-Para trabajar estos puntos estratégicos en profundidad, te recomendamos agendar una sesión con uno de nuestros mentores en La Comunidad del Intercambio.
-`
+💡 RECOMENDACIÓN:
+Para no perder tiempo, puedes agendar una sesión directamente con un mentor para una revisión humana mientras restablecemos el servicio automático.`
     }
 
     // Extraer el puntaje dinámicamente de la respuesta de Claude usando Regex
@@ -141,7 +136,7 @@ Para trabajar estos puntos estratégicos en profundidad, te recomendamos agendar
       .from('feedback_generado')
       .insert({
         ensayo_id: ensayoData.id,
-        puntaje: puntajeReal, 
+        puntaje: puntajeReal,
         raw_response: claudeResponse
       })
 

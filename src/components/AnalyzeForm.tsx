@@ -13,6 +13,8 @@ export default function AnalyzeForm() {
   const [wordCount, setWordCount] = useState(0)
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0)
   const [focusedField, setFocusedField] = useState<string | null>(null)
+  const [becaSelection, setBecaSelection] = useState('')
+  const [otraBeca, setOtraBeca] = useState('')
 
   const loadingMessages = [
     "Analizando estructura del ensayo...",
@@ -53,7 +55,8 @@ export default function AnalyzeForm() {
 
     const formData = new FormData(form)
     const pais = formData.get('pais') as string
-    const beca = formData.get('beca') as string
+    const becaBase = formData.get('beca') as string
+    const beca = becaBase === 'Otra' ? otraBeca : becaBase
     const ensayo = formData.get('ensayo') as string
 
     try {
@@ -68,6 +71,8 @@ export default function AnalyzeForm() {
 
       setSuccess(true)
       setEnsayoText('')
+      setBecaSelection('')
+      setOtraBeca('')
       form.reset()
       router.refresh()
     } catch (err: any) {
@@ -154,25 +159,54 @@ export default function AnalyzeForm() {
                 <BookOpen className="w-3.5 h-3.5" />
                 Beca a la que aplicas
               </label>
-              <select
-                name="beca"
-                required
-                disabled={isAnalyzing}
-                defaultValue=""
-                style={{ ...inputStyle('beca'), appearance: 'none', cursor: 'pointer' }}
-                onFocus={() => setFocusedField('beca')}
-                onBlur={() => setFocusedField(null)}
-              >
-                <option value="" disabled>Selecciona una opción...</option>
-                <option value="Chevening">Chevening (Reino Unido)</option>
-                <option value="Fundación Carolina">Fundación Carolina (España)</option>
-                <option value="Erasmus Mundus">Erasmus Mundus (Europa)</option>
-                <option value="Fulbright">Fulbright (USA)</option>
-                <option value="Eiffel">Eiffel (Francia)</option>
-                <option value="OEA">OEA / MEXT / Otra</option>
-              </select>
+              <div className="relative">
+                <select
+                  name="beca"
+                  required
+                  disabled={isAnalyzing}
+                  value={becaSelection}
+                  onChange={(e) => setBecaSelection(e.target.value)}
+                  style={{ ...inputStyle('beca'), appearance: 'none', cursor: 'pointer' }}
+                  onFocus={() => setFocusedField('beca')}
+                  onBlur={() => setFocusedField(null)}
+                >
+                  <option value="" disabled>Selecciona una opción...</option>
+                  <option value="Chevening">Chevening (Reino Unido)</option>
+                  <option value="Fundación Carolina">Fundación Carolina (España)</option>
+                  <option value="Erasmus Mundus">Erasmus Mundus (Europa)</option>
+                  <option value="Fulbright">Fulbright (USA)</option>
+                  <option value="Eiffel">Eiffel (Francia)</option>
+                  <option value="OEA / MEXT">OEA / MEXT</option>
+                  <option value="Otra">Otra beca...</option>
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
+
+          {/* Campo extra si elige 'Otra' */}
+          {becaSelection === 'Otra' && (
+            <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+              <label className="flex items-center gap-1.5 text-xs text-slate-500 uppercase font-bold mb-2 tracking-wide">
+                Nombre de la Beca
+              </label>
+              <input
+                type="text"
+                required
+                disabled={isAnalyzing}
+                placeholder="Escribe el nombre de tu beca u organización..."
+                value={otraBeca}
+                onChange={(e) => setOtraBeca(e.target.value)}
+                style={inputStyle('otraBeca')}
+                onFocus={() => setFocusedField('otraBeca')}
+                onBlur={() => setFocusedField(null)}
+              />
+            </div>
+          )}
 
           {/* Textarea del ensayo */}
           <div>

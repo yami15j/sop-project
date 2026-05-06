@@ -11,7 +11,7 @@ import { solicitarMentoria, logout, switchAccount } from './actions'
 
 export default async function DashboardPage(props: { searchParams: Promise<{ ensayo?: string; bienvenido?: string; nuevo?: string; vista?: string }> | { ensayo?: string; bienvenido?: string; nuevo?: string; vista?: string } }) {
   const searchParams = await Promise.resolve(props.searchParams)
-  
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -61,7 +61,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
       {/* ── HEADER ── */}
       <header className="sticky top-0 z-40" style={{ background: 'linear-gradient(135deg, #010B2B 0%, #0d1f4a 100%)', borderBottom: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 4px 32px rgba(1,11,43,0.4)' }}>
         <div className="max-w-7xl mx-auto px-6 h-[72px] flex justify-between items-center gap-4">
-          
+
           {/* Logo + Título */}
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #00A8E8, #0070b8)' }}>
@@ -103,7 +103,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
                   <span className="hidden sm:inline">Cambiar cuenta</span>
                 </button>
               </form>
-              
+
               <form action={logout}>
                 <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold transition-all bg-white/5 hover:bg-red-500/15 border border-white/10 text-slate-100" title="Salir a la página principal">
                   <LogOut className="w-3.5 h-3.5" />
@@ -249,162 +249,146 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
 
           {/* ÁREA PRINCIPAL */}
           <div className="lg:col-span-8 xl:col-span-9 h-fit">
+            {(() => {
+              const vistaTexto = searchParams?.vista === 'texto'
+              const vistaMentoria = searchParams?.vista === 'mentoria'
 
-            {selectedEnsayo ? (
-              /* ─ VISTA SEGÚN PARÁMETRO ─ */
-              <div className="rounded-3xl overflow-hidden" style={{ background: 'white', border: '1px solid rgba(1,11,43,0.09)', boxShadow: '0 8px 40px rgba(0,0,0,0.06)' }}>
-                {/* Header */}
-                <div className="px-8 py-6 flex flex-col md:flex-row justify-between md:items-center gap-4" style={{ background: 'linear-gradient(135deg, #010B2B 0%, #0d1f4a 100%)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-                  <div>
-                    <h2 className="text-2xl font-extrabold text-white mb-2">
-                      {vistaTexto ? '📄 Mi Ensayo' : 'Resultados del Análisis'}
-                    </h2>
-                    <div className="flex flex-wrap items-center gap-2 text-sm">
-                      <span className="px-3 py-1.5 rounded-lg font-bold text-[#00A8E8]" style={{ background: 'rgba(0,168,232,0.15)', border: '1px solid rgba(0,168,232,0.25)' }}>
-                        🎯 {selectedEnsayo.beca_objetivo || 'Beca General'}
-                      </span>
-                      <span className="px-3 py-1.5 rounded-lg font-bold text-slate-300" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}>
-                        📍 {selectedEnsayo.pais_destino || 'Destino no especificado'}
-                      </span>
-                      {/* Botón para alternar entre texto y feedback */}
-                      {selectedEnsayo.feedback_generado?.[0] && (
-                        <Link
-                          href={vistaTexto ? `/dashboard?ensayo=${selectedEnsayo.id}` : `/dashboard?ensayo=${selectedEnsayo.id}&vista=texto`}
-                          className="px-3 py-1.5 rounded-lg font-bold transition-all"
-                          style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}
-                        >
-                          {vistaTexto ? '📊 Ver análisis IA' : '📄 Ver ensayo'}
-                        </Link>
+              if (selectedEnsayo) {
+                return (
+                  /* ─ VISTA SEGÚN PARÁMETRO ─ */
+                  <div className="rounded-3xl overflow-hidden" style={{ background: 'white', border: '1px solid rgba(1,11,43,0.09)', boxShadow: '0 8px 40px rgba(0,0,0,0.06)' }}>
+                    {/* Header */}
+                    <div className="px-8 py-6 flex flex-col md:flex-row justify-between md:items-center gap-4" style={{ background: 'linear-gradient(135deg, #010B2B 0%, #0d1f4a 100%)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                      <div>
+                        <h2 className="text-2xl font-extrabold text-white mb-2">
+                          {vistaTexto ? '📄 Mi Ensayo' : 'Resultados del Análisis'}
+                        </h2>
+                        <div className="flex flex-wrap items-center gap-2 text-sm">
+                          <span className="px-3 py-1.5 rounded-lg font-bold text-[#00A8E8]" style={{ background: 'rgba(0,168,232,0.15)', border: '1px solid rgba(0,168,232,0.25)' }}>
+                            🎯 {selectedEnsayo.beca_objetivo || 'Beca General'}
+                          </span>
+                          <span className="px-3 py-1.5 rounded-lg font-bold text-slate-300" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}>
+                            📍 {selectedEnsayo.pais_destino || 'Destino no especificado'}
+                          </span>
+                          {/* Botones de navegación interna */}
+                          <div className="flex gap-2">
+                            {selectedEnsayo.feedback_generado?.[0] && (
+                              <Link
+                                href={vistaTexto ? `/dashboard?ensayo=${selectedEnsayo.id}` : `/dashboard?ensayo=${selectedEnsayo.id}&vista=texto`}
+                                className="px-3 py-1.5 rounded-lg font-bold transition-all text-xs"
+                                style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}
+                              >
+                                {vistaTexto ? '📊 Ver análisis IA' : '📄 Ver ensayo'}
+                              </Link>
+                            )}
+                            <Link
+                              href="/dashboard?vista=mentoria"
+                              className="px-3 py-1.5 rounded-lg font-bold transition-all text-xs"
+                              style={{ background: 'rgba(0,168,232,0.2)', border: '1px solid rgba(0,168,232,0.4)', color: '#00A8E8' }}
+                            >
+                              ⭐ Mentoría Premium
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-left md:text-right">
+                        <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Enviado el</div>
+                        <div className="text-sm font-semibold text-slate-200">
+                          {new Date(selectedEnsayo.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-8 md:p-10">
+                      {vistaTexto ? (
+                        /* ── VISTA SOLO TEXTO DEL ENSAYO ── */
+                        <div>
+                          <div className="flex items-center justify-between mb-5">
+                            <div className="flex items-center gap-2">
+                              <FileText className="w-5 h-5 text-slate-400" />
+                              <span className="text-sm font-bold text-slate-500 uppercase tracking-wide">Texto del ensayo</span>
+                            </div>
+                            <span className="text-xs font-medium px-3 py-1.5 rounded-lg" style={{ background: '#f1f5f9', color: '#64748b' }}>
+                              {selectedEnsayo.contenido?.trim().split(/\s+/).length ?? 0} palabras
+                            </span>
+                          </div>
+                          <div
+                            className="rounded-2xl p-6 text-slate-700 leading-[1.9] text-[15px] whitespace-pre-wrap"
+                            style={{ background: '#f8fafc', border: '1px solid #e2e8f0', fontFamily: 'Georgia, serif', minHeight: '400px' }}
+                          >
+                            {selectedEnsayo.contenido || 'No hay texto disponible.'}
+                          </div>
+                        </div>
+                      ) : selectedEnsayo.feedback_generado?.[0] ? (
+                        <FeedbackCard
+                          rawResponse={selectedEnsayo.feedback_generado[0].raw_response}
+                          puntajeEstimado={selectedEnsayo.feedback_generado[0].puntaje}
+                          ensayoOriginal={selectedEnsayo.contenido}
+                          becaObjetivo={selectedEnsayo.beca_objetivo}
+                          paisDestino={selectedEnsayo.pais_destino}
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center py-24 rounded-2xl" style={{ background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)', border: '1px dashed #cbd5e1' }}>
+                          <p className="text-xl font-extrabold text-[#010B2B] mb-2">Analizando tu ensayo...</p>
+                        </div>
                       )}
                     </div>
                   </div>
-                  <div className="text-left md:text-right">
-                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Enviado el</div>
-                    <div className="text-sm font-semibold text-slate-200">
-                      {new Date(selectedEnsayo.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                )
+              }
+
+              if (vistaMentoria || (ensayosRestantes === 0 && !lead)) {
+                return (
+                  /* ─ VISTA MENTORÍA ─ */
+                  <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <div className="mb-6 flex items-center justify-between">
+                      <div>
+                        <h2 className="text-2xl font-extrabold text-[#010B2B]">Mentoría Premium</h2>
+                        <p className="text-slate-500 mt-1">Lleva tu aplicación al siguiente nivel con expertos.</p>
+                      </div>
+                      {ensayosRestantes > 0 && (
+                        <Link href="/dashboard" className="text-sm font-bold text-[#00A8E8] hover:underline">
+                          ← Volver a analizar
+                        </Link>
+                      )}
+                    </div>
+                    <div id="mentoria" className="rounded-3xl overflow-hidden relative" style={{ background: 'linear-gradient(160deg,#0a0f2e 0%,#0d1f4a 50%,#0f1e3d 100%)', border: '1px solid rgba(249,115,22,0.2)', boxShadow: '0 20px 60px rgba(1,11,43,0.5)' }}>
+                      <div className="relative p-7">
+                        <MentoriaForm
+                          nombreDefault={user?.user_metadata?.full_name || user?.user_metadata?.name || ''}
+                          emailDefault={user?.email || ''}
+                          becaDefault={ensayos?.[0]?.beca_objetivo || ''}
+                          paisDefault={ensayos?.[0]?.pais_destino || ''}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
+                )
+              }
 
-                <div className="p-8 md:p-10">
-                  {vistaTexto ? (
-                    /* ── VISTA SOLO TEXTO DEL ENSAYO ── */
-                    <div>
-                      <div className="flex items-center justify-between mb-5">
-                        <div className="flex items-center gap-2">
-                          <FileText className="w-5 h-5 text-slate-400" />
-                          <span className="text-sm font-bold text-slate-500 uppercase tracking-wide">Texto del ensayo</span>
-                        </div>
-                        <span className="text-xs font-medium px-3 py-1.5 rounded-lg" style={{ background: '#f1f5f9', color: '#64748b' }}>
-                          {selectedEnsayo.contenido?.trim().split(/\s+/).length ?? 0} palabras
-                        </span>
-                      </div>
-                      <div
-                        className="rounded-2xl p-6 text-slate-700 leading-[1.9] text-[15px] whitespace-pre-wrap"
-                        style={{ background: '#f8fafc', border: '1px solid #e2e8f0', fontFamily: 'Georgia, serif', minHeight: '400px' }}
-                      >
-                        {selectedEnsayo.contenido || 'No hay texto disponible.'}
-                      </div>
-                    </div>
-                  ) : selectedEnsayo.feedback_generado?.[0] ? (
-                    <FeedbackCard
-                      rawResponse={selectedEnsayo.feedback_generado[0].raw_response}
-                      puntajeEstimado={selectedEnsayo.feedback_generado[0].puntaje}
-                      ensayoOriginal={selectedEnsayo.contenido}
-                      becaObjetivo={selectedEnsayo.beca_objetivo}
-                      paisDestino={selectedEnsayo.pais_destino}
-                    />
-                  ) : (
-                    /* Loading de feedback */
-                    <div className="flex flex-col items-center justify-center py-24 rounded-2xl" style={{ background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)', border: '1px dashed #cbd5e1' }}>
-                      <div className="relative mb-6">
-                        <div className="w-16 h-16 rounded-full" style={{ border: '3px solid rgba(0,168,232,0.15)', borderTop: '3px solid #00A8E8', animation: 'spin 1s linear infinite' }} />
-                        <Sparkles className="w-6 h-6 text-[#00A8E8] absolute inset-0 m-auto" />
-                      </div>
-                      <p className="text-xl font-extrabold text-[#010B2B] mb-2">Analizando tu ensayo...</p>
-                      <p className="text-slate-500 text-center max-w-sm text-sm leading-relaxed">Nuestra IA está procesando el documento. Esto tomará unos segundos.</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-            ) : (
-              /* ─ VISTA NUEVO ENSAYO ─ */
-              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-
-                {/* Encabezado de sección */}
-                <div className="mb-6">
-                  <h2 className="text-2xl font-extrabold text-[#010B2B]">Nuevo Análisis</h2>
-                  <p className="text-slate-500 mt-1">Pega tu carta de motivación o Personal Statement y obtén feedback instantáneo.</p>
-                </div>
-
-                {ensayosRestantes > 0 ? (
-                  <AnalyzeForm />
-
-                ) : lead ? (
-                  /* Estado: ya solicitó mentoría */
-                  <div id="mentoria" className="rounded-3xl overflow-hidden text-center"
-                    style={{ background: 'linear-gradient(145deg,#010B2B,#0d1f4a)', border: '1px solid rgba(74,222,128,0.25)', boxShadow: '0 12px 48px rgba(1,11,43,0.4)' }}>
-                    <div className="h-1" style={{ background: 'linear-gradient(to right,#22c55e,#4ade80,#22c55e)' }} />
+              if (lead && ensayosRestantes === 0) {
+                return (
+                  /* ─ VISTA SOLICITUD RECIBIDA ─ */
+                  <div className="rounded-3xl overflow-hidden text-center" style={{ background: 'linear-gradient(145deg,#010B2B,#0d1f4a)', border: '1px solid rgba(74,222,128,0.25)', boxShadow: '0 12px 48px rgba(1,11,43,0.4)' }}>
                     <div className="p-10">
-                      <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-5"
-                        style={{ background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.25)', boxShadow: '0 0 24px rgba(74,222,128,0.15)' }}>✅</div>
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold mb-4"
-                        style={{ background: 'rgba(74,222,128,0.12)', color: '#4ade80', border: '1px solid rgba(74,222,128,0.25)' }}>
-                        🎉 Solicitud enviada
-                      </div>
                       <h2 className="text-2xl font-extrabold text-white mb-3">¡Solicitud Recibida!</h2>
-                      <p className="leading-relaxed max-w-md mx-auto" style={{ color: 'rgba(148,163,184,0.85)', fontSize: '15px' }}>
-                        Nuestro equipo de admisiones está revisando tu perfil. Te contactaremos muy pronto para agendar tu mentoría premium 1 a 1.
-                      </p>
+                      <p className="text-slate-400">Nuestro equipo te contactará muy pronto para agendar tu mentoría.</p>
                     </div>
                   </div>
+                )
+              }
 
-                ) : (
-                  /* Estado: límite alcanzado — CTA mentoría */
-                  <div id="mentoria" className="rounded-3xl overflow-hidden relative"
-                    style={{ background: 'linear-gradient(160deg,#0a0f2e 0%,#0d1f4a 50%,#0f1e3d 100%)', border: '1px solid rgba(249,115,22,0.2)', boxShadow: '0 20px 60px rgba(1,11,43,0.5)' }}>
-
-                    {/* Franja superior animada */}
-                    <div className="h-px" style={{ background: 'linear-gradient(to right,transparent,#f97316,#fb923c,#f59e0b,transparent)' }} />
-
-                    {/* Orbe decorativo de fondo */}
-                    <div className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle at 70% 30%,rgba(249,115,22,0.08),transparent 70%)' }} />
-                    <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle,rgba(99,102,241,0.06),transparent 70%)' }} />
-
-                    <div className="relative p-7">
-                      {/* Cabecera */}
-                      <div className="flex items-start justify-between gap-4 mb-5">
-                        <div>
-                          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider mb-3"
-                            style={{ background: 'rgba(249,115,22,0.12)', color: '#fb923c', border: '1px solid rgba(249,115,22,0.25)' }}>
-                            🔒 Créditos agotados
-                          </div>
-                          <h2 className="text-xl font-extrabold text-white leading-tight mb-1">¿Listo para el siguiente nivel?</h2>
-                          <p className="text-sm leading-relaxed" style={{ color: 'rgba(148,163,184,0.7)' }}>Accede a mentoría 1 a 1 y revisiones ilimitadas con expertos en admisiones.</p>
-                        </div>
-                        <div className="flex-shrink-0 w-11 h-11 rounded-2xl flex items-center justify-center text-xl"
-                          style={{ background: 'rgba(249,115,22,0.12)', border: '1px solid rgba(249,115,22,0.2)', boxShadow: '0 0 20px rgba(249,115,22,0.1)' }}>
-                          🚀
-                        </div>
-                      </div>
-
-                      {/* Separador */}
-                      <div className="mb-5" style={{ height: '1px', background: 'linear-gradient(to right,transparent,rgba(255,255,255,0.07),transparent)' }} />
-
-                      {/* Formulario */}
-                      <MentoriaForm
-                        nombreDefault={user?.user_metadata?.full_name || user?.user_metadata?.name || ''}
-                        emailDefault={user?.email || ''}
-                        becaDefault={ensayos?.[0]?.beca_objetivo || ''}
-                        paisDefault={ensayos?.[0]?.pais_destino || ''}
-                      />
-                    </div>
+              return (
+                /* ─ VISTA NUEVO ENSAYO ─ */
+                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <div className="mb-6">
+                    <h2 className="text-2xl font-extrabold text-[#010B2B]">Nuevo Análisis</h2>
+                    <p className="text-slate-500 mt-1">Pega tu carta de motivación y obtén feedback instantáneo.</p>
                   </div>
-                )}
-              </div>
-            )}
-
+                  <AnalyzeForm />
+                </div>
+              )
+            })()}
           </div>
         </div>
       </div>

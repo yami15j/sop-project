@@ -110,13 +110,22 @@ export default function DashboardSidebar({ ensayos, selectedEnsayoId, ensayosRes
                       {ensayo.pais_destino ? `📍 ${ensayo.pais_destino}` : new Date(ensayo.created_at).toLocaleDateString()}
                     </span>
                   </div>
-                  {puntaje && (
-                    <span className="text-xs font-extrabold px-2 py-1 rounded-lg flex-shrink-0"
-                      style={{ background: isSelected ? 'rgba(255,255,255,0.25)' : '#f0fdf4', color: isSelected ? 'white' : '#16a34a' }}>
+                  {typeof puntaje === 'number' ? (
+                    <span className="text-xs font-extrabold px-2.5 py-1 rounded-lg flex-shrink-0 transition-all"
+                      style={{ 
+                        background: isSelected 
+                          ? 'rgba(255,255,255,0.25)' 
+                          : puntaje >= 8 ? '#f0fdf4' : puntaje >= 5 ? '#fff7ed' : '#fef2f2', 
+                        color: isSelected 
+                          ? 'white' 
+                          : puntaje >= 8 ? '#16a34a' : puntaje >= 5 ? '#ea580c' : '#dc2626',
+                        border: isSelected ? 'none' : `1px solid ${puntaje >= 8 ? '#dcfce7' : puntaje >= 5 ? '#ffedd5' : '#fee2e2'}`
+                      }}>
                       {puntaje}
                     </span>
+                  ) : (
+                    <ChevronRight className="w-4 h-4 flex-shrink-0 opacity-40" />
                   )}
-                  {!puntaje && <ChevronRight className="w-4 h-4 flex-shrink-0 opacity-40" />}
                 </Link>
               )
             })}
