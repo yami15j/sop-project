@@ -1,12 +1,12 @@
 import { signup } from './actions'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Sparkles } from 'lucide-react'
 
 export default async function SignupPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error: string }>
+  searchParams: Promise<{ error?: string, msg?: string }>
 }) {
   const params = await searchParams;
 
@@ -38,11 +38,18 @@ export default async function SignupPage({
               className="object-cover w-full h-full"
             />
           </div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-[#010B2B]">
-            ¡Únete a la Comunidad!
+          {params?.msg === 'evaluar' && (
+            <div className="mb-3">
+              <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full bg-[#00A8E8]/10 text-[#00A8E8] text-[9px] font-black uppercase tracking-widest border border-[#00A8E8]/20 shadow-sm">
+                <Sparkles className="w-3 h-3" /> Modo Evaluación
+              </span>
+            </div>
+          )}
+          <h1 className={`font-extrabold tracking-tight text-[#010B2B] text-balance ${params?.msg === 'evaluar' ? 'text-[1.1rem] leading-snug' : 'text-2xl'}`}>
+            {params?.msg === 'evaluar' ? 'A un paso de tu análisis 🚀' : '¡Únete a la Comunidad!'}
           </h1>
-          <p className="mt-2 text-slate-500 font-medium">
-            Crea tu cuenta gratuita para empezar a evaluar tus ensayos.
+          <p className={`mt-2 text-slate-500 font-medium text-balance ${params?.msg === 'evaluar' ? 'text-[13px] max-w-[280px]' : ''}`}>
+            {params?.msg === 'evaluar' ? 'Crea tu cuenta gratuita para desbloquear el feedback de la IA.' : 'Crea tu cuenta gratuita para empezar a evaluar tus ensayos.'}
           </p>
         </div>
 

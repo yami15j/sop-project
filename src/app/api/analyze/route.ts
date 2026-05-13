@@ -47,21 +47,29 @@ export async function POST(req: Request) {
     }
 
     // Verificar límite de 2 ensayos gratis
-    const { count } = await supabase
+    const { data: ensayosPrevios, error: countError } = await supabase
       .from('ensayos_enviados')
-      .select('*', { count: 'exact', head: true })
+      .select('id')
       .eq('user_id', user.id)
 
-    if (count !== null && count >= 2) {
+    if (countError) {
+      console.error('[API] Error al contar ensayos:', countError)
+    }
+
+    const count = ensayosPrevios?.length || 0
+    console.log(`[API] Usuario: ${user.email} (ID: ${user.id}), Ensayos encontrados: ${count}`)
+
+    // Límite aumentado temporalmente para pruebas a 10
+    if (count >= 10) {
       return NextResponse.json(
-        { error: 'Has alcanzado el límite de 2 ensayos gratuitos. Por favor adquiere una mentoría premium para continuar.' },
+        { error: `Has alcanzado el límite de 10 ensayos de prueba. Por favor adquiere una mentoría premium para continuar.` },
         { status: 403 }
       )
     }
 
     // 1. Recibir los datos
     const body = await req.json()
-    const { ensayo, pais_destino, beca_objetivo } = body
+    const { ensayo, pais_destino, beca_objetivo, pdf_url } = body
 
     if (!ensayo || ensayo.trim().length < 50) {
       return NextResponse.json({ error: 'El ensayo es muy corto.' }, { status: 400 })
@@ -70,45 +78,53 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'El ensayo es demasiado largo.' }, { status: 400 })
     }
 
-    // 2. Leer tu archivo de prompt
+    // 2. Leer y preparar el prompt del archivo externo
     const promptPath = path.join(process.cwd(), 'prompt_v1.md')
-    const systemPrompt = fs.readFileSync(promptPath, 'utf-8')
+    let systemPrompt = fs.readFileSync(promptPath, 'utf-8')
 
-    const userMessage = `País de destino: ${pais_destino}\nBeca objetivo: ${beca_objetivo}\n\nEnsayo:\n${ensayo}`
+    // Rellenamos los placeholders en el system prompt tal como lo pide tu snippet
+    systemPrompt = systemPrompt
+      .replace('{beca}', beca_objetivo || 'General')
+      .replace('{pais}', pais_destino || 'No especificado')
+      .replace('{area}', 'No especificada') // Podríamos añadir este campo al form luego
+      .replace('{ensayo}', ensayo)
 
-    // 3. Enviar a Claude
+    // 3. Enviar a Claude con la nueva configuración Opus 4.7 + Adaptive Thinking
     let claudeResponse = ''
     try {
       const message = await anthropic.messages.create({
-        model: 'claude-3-5-sonnet-latest', // Modelo válido de Anthropic
-        max_tokens: 1500,
+        model: 'claude-opus-4-7',
+        max_tokens: 20000,
         system: systemPrompt,
-        messages: [{ role: 'user', content: userMessage }],
+        messages: [
+          {
+            role: 'user',
+            content: [{ type: 'text', text: "Por favor, realiza la evaluación de mi ensayo según las instrucciones proporcionadas." }]
+          }
+        ],
+        thinking: {
+          type: 'adaptive'
+        }
       })
-      claudeResponse = message.content[0].type === 'text' ? message.content[0].text : ''
+      
+      // Extraemos el texto de la respuesta
+      claudeResponse = message.content.find((c: any) => c.type === 'text')?.text || ''
+      
+      if (!claudeResponse) {
+        throw new Error('La IA no devolvió contenido de texto.')
+      }
+
     } catch (apiError: any) {
-      console.warn("Anthropic API falló.", apiError.message)
-      claudeResponse = `
-📊 PUNTUACIÓN GENERAL: 0/10
-
-✅ NOTA IMPORTANTE:
-Hubo un inconveniente técnico al procesar el análisis detallado. Esto puede deberse a un problema temporal de conexión o mantenimiento del sistema.
-
-🔧 PRÓXIMOS PASOS:
-1. Reintenta enviar tu ensayo en unos minutos.
-2. Si el problema persiste, contacta al soporte técnico.
-
-💡 RECOMENDACIÓN:
-Para no perder tiempo, puedes agendar una sesión directamente con un mentor para una revisión humana mientras restablecemos el servicio automático.`
+      console.error("Error crítico en la API de Anthropic:", apiError)
+      throw new Error(`Error de comunicación con la IA: ${apiError.message}`)
     }
 
     // Extraer el puntaje dinámicamente de la respuesta de Claude usando Regex
-    // Busca patrones como "PUNTUACIÓN GENERAL: 7/10" o "PUNTUACION GENERAL: 9/10"
-    const scoreMatch = claudeResponse.match(/PUNTUACI(?:O|Ó)N GENERAL:\s*(\d+)\/10/i)
-    const puntajeReal = scoreMatch ? parseInt(scoreMatch[1], 10) : 8 // Si no lo encuentra, por defecto 8
+    // Busca patrones como "PUNTUACIÓN GENERAL: 7/10" o "9.3/10"
+    const scoreMatch = claudeResponse.match(/PUNTUACI(?:O|Ó)N GENERAL:\s*([\d.]+)\/10/i)
+    const puntajeReal = scoreMatch ? Math.round(parseFloat(scoreMatch[1])) : 8
 
     // 4. Guardar en Base de Datos
-    // Insertar ensayo (con nombre y email del usuario para trazabilidad)
     const nombreUsuario = user.user_metadata?.full_name
       || user.user_metadata?.name
       || user.email?.split('@')[0]
@@ -123,6 +139,7 @@ Para no perder tiempo, puedes agendar una sesión directamente con un mentor par
         beca_objetivo,
         nombre_usuario: nombreUsuario,
         email_usuario: user.email ?? null,
+        pdf_url: pdf_url ?? null,
       })
       .select()
       .single()

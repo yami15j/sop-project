@@ -6,7 +6,7 @@ import FeedbackCard from '@/components/FeedbackCard'
 import MentoriaForm from '@/components/MentoriaForm'
 import DashboardSidebar from '@/components/DashboardSidebar'
 import WelcomeBanner from '@/components/WelcomeBanner'
-import { LogOut, Sparkles, FileText, Trophy, Zap, Users } from 'lucide-react'
+import { LogOut, Sparkles, FileText, Trophy, Zap, Users, Download } from 'lucide-react'
 import { solicitarMentoria, logout, switchAccount } from './actions'
 
 export default async function DashboardPage(props: { searchParams: Promise<{ ensayo?: string; bienvenido?: string; nuevo?: string; vista?: string }> | { ensayo?: string; bienvenido?: string; nuevo?: string; vista?: string } }) {
@@ -19,17 +19,25 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
     redirect('/login')
   }
 
-  const { data: ensayos } = await supabase
+  const { data: ensayos, error: ensayosError } = await supabase
     .from('ensayos_enviados')
     .select('*, feedback_generado (*)')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })
 
-  const { data: lead } = await supabase
+  if (ensayosError) {
+    console.error('[Dashboard] Error cargando ensayos:', ensayosError)
+  }
+
+  const { data: lead, error: leadError } = await supabase
     .from('leads_mentoria')
     .select('*')
     .eq('user_id', user.id)
     .maybeSingle()
+
+  if (leadError) {
+    console.error('[Dashboard] Error cargando lead:', leadError)
+  }
 
   const ensayosUsados = ensayos?.length || 0
   const ensayosRestantes = Math.max(0, 2 - ensayosUsados)
@@ -272,10 +280,24 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
                           </span>
                           {/* Botones de navegación interna */}
                           <div className="flex gap-2">
+                            {selectedEnsayo.pdf_url && (
+                              <a
+                                href={selectedEnsayo.pdf_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-3 py-1.5 rounded-lg font-bold transition-all text-xs flex items-center gap-1.5 hover:bg-white/15"
+                                style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}
+                                download
+                              >
+                                <Download className="w-3.5 h-3.5" />
+                                <span className="hidden sm:inline">Descargar PDF</span>
+                                <span className="sm:hidden">PDF</span>
+                              </a>
+                            )}
                             {selectedEnsayo.feedback_generado?.[0] && (
                               <Link
                                 href={vistaTexto ? `/dashboard?ensayo=${selectedEnsayo.id}` : `/dashboard?ensayo=${selectedEnsayo.id}&vista=texto`}
-                                className="px-3 py-1.5 rounded-lg font-bold transition-all text-xs"
+                                className="px-3 py-1.5 rounded-lg font-bold transition-all text-xs hover:bg-white/15"
                                 style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}
                               >
                                 {vistaTexto ? '📊 Ver análisis IA' : '📄 Ver ensayo'}

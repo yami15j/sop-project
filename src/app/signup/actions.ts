@@ -16,6 +16,7 @@ export async function signup(formData: FormData) {
     email,
     password,
     options: {
+      emailRedirectTo: `http://localhost:3000/api/auth/callback?next=/dashboard`,
       data: {
         full_name: `${nombre} ${apellido}`.trim(),
         nombre,
@@ -37,5 +38,5 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect(`/dashboard?bienvenido=1&nuevo=1`)
+  redirect(`/signup/confirm`)
 }

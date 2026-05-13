@@ -29,7 +29,7 @@ export default function LandingPage() {
           <Link href="/login" className="px-4 py-2 text-sm font-bold text-slate-300 hover:text-white transition-colors hidden sm:block">
             Iniciar Sesión
           </Link>
-          <Link href="/dashboard" className="bg-[#00A8E8] hover:bg-[#0090C7] text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-[#00A8E8]/30">
+          <Link href="/signup?msg=evaluar" className="bg-[#00A8E8] hover:bg-[#0090C7] text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-[#00A8E8]/30">
             Evaluar Ensayo
           </Link>
         </div>
@@ -62,7 +62,7 @@ export default function LandingPage() {
               Democratizamos el acceso a la educación global. Usa nuestra Inteligencia Artificial para pulir tu carta de motivación, corregir errores y asegurar tu futuro.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/dashboard" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#00A8E8] hover:bg-[#0090C7] text-white px-8 py-4 rounded-2xl text-lg font-bold transition-all shadow-lg shadow-[#00A8E8]/30 hover:-translate-y-1">
+              <Link href="/signup?msg=evaluar" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#00A8E8] hover:bg-[#0090C7] text-white px-8 py-4 rounded-2xl text-lg font-bold transition-all shadow-lg shadow-[#00A8E8]/30 hover:-translate-y-1">
                 Evaluar mi ensayo gratis
                 <ArrowRight className="w-5 h-5" />
               </Link>
@@ -122,68 +122,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonios */}
-      <section className="py-28 px-6 bg-white relative z-10">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <span className="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-[#00A8E8]/10 text-[#00A8E8] text-sm font-bold border border-[#00A8E8]/20 mb-6">
-              ⭐ Historias reales de éxito
-            </span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-[#010B2B] mb-5 tracking-tight">Lo que dicen nuestros estudiantes</h2>
-            <p className="text-slate-500 max-w-xl mx-auto text-lg">Estudiantes de toda Latinoamérica ya usaron nuestra herramienta para perfeccionar sus ensayos y obtener sus becas.</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                nombre: "Valeria Torres",
-                pais: "🇨🇴 Colombia",
-                beca: "Beca Chevening 2024",
-                foto: "VT",
-                color: "from-purple-500 to-indigo-600",
-                texto: "Subí mi Personal Statement y en segundos la IA me señaló que mi narrativa era demasiado genérica. Gracias a las sugerencias, reescribí mi apertura y quedé entre los 50 seleccionados en Colombia. ¡Fue un cambio total!",
-              },
-              {
-                nombre: "Andrés Mejía",
-                pais: "🇪🇨 Ecuador",
-                beca: "Beca Fulbright 2024",
-                foto: "AM",
-                color: "from-[#00A8E8] to-blue-600",
-                texto: "Lo que más me sorprendió fue la velocidad. En menos de 2 minutos tenía un análisis detallado con mis fortalezas y áreas de mejora. El PDF que generé lo usé como guía durante todo el proceso de aplicación.",
-              },
-              {
-                nombre: "Luciana Ríos",
-                pais: "🇵🇪 Perú",
-                beca: "Erasmus Mundus 2025",
-                foto: "LR",
-                color: "from-emerald-500 to-teal-600",
-                texto: "Usé el evaluador 3 veces con distintas versiones de mi carta de motivación. Al final mi tutor me dijo que era el mejor Statement que había leído de un postulante latinoamericano.",
-              },
-            ].map((t, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-                className="bg-white p-8 rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.05)] flex flex-col gap-6 hover:-translate-y-1 transition-transform duration-300"
-              >
-                <div className="flex gap-1 text-amber-400 text-lg">{'★★★★★'}</div>
-                <p className="text-slate-600 leading-relaxed text-[15px] flex-1">"{t.texto}"</p>
-                <div className="flex items-center gap-4 pt-4 border-t border-slate-100">
-                  <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${t.color} flex items-center justify-center text-white font-extrabold text-sm flex-shrink-0 shadow-md`}>
-                    {t.foto}
-                  </div>
-                  <div>
-                    <div className="font-bold text-[#010B2B] text-sm">{t.nombre}</div>
-                    <div className="text-xs text-slate-500">{t.pais} · {t.beca}</div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* CTA Final - High Contrast */}
       <section className="py-32 px-6">
@@ -194,7 +132,7 @@ export default function LandingPage() {
 
           <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight text-white relative z-10">¿Listo para estudiar en el extranjero?</h2>
           <p className="text-slate-300 mb-10 text-lg md:text-xl max-w-2xl mx-auto relative z-10">Más allá de las calificaciones, trabajamos en fortalecer habilidades, historias y perfiles que conecten con lo que realmente buscan las becas internacionales.</p>
-          <Link href="/dashboard" className="inline-flex items-center gap-2 bg-[#00A8E8] hover:bg-[#0090C7] text-white px-10 py-5 rounded-2xl text-lg font-bold transition-all shadow-[0_0_40px_rgba(0,168,232,0.4)] hover:-translate-y-1 relative z-10">
+          <Link href="/signup" className="inline-flex items-center gap-2 bg-[#00A8E8] hover:bg-[#0090C7] text-white px-10 py-5 rounded-2xl text-lg font-bold transition-all shadow-[0_0_40px_rgba(0,168,232,0.4)] hover:-translate-y-1 relative z-10">
             Crear mi cuenta gratuita
             <ArrowRight className="w-6 h-6" />
           </Link>
