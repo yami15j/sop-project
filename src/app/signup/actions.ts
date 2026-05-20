@@ -2,10 +2,12 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 
 export async function signup(formData: FormData) {
   const supabase = await createClient()
+  const origin = (await headers()).get('origin') || 'http://localhost:3000'
 
   const nombre = formData.get('nombre') as string
   const apellido = formData.get('apellido') as string
@@ -16,7 +18,7 @@ export async function signup(formData: FormData) {
     email,
     password,
     options: {
-      emailRedirectTo: `http://localhost:3000/api/auth/callback?next=/dashboard`,
+      emailRedirectTo: `${origin}/api/auth/callback?next=/dashboard`,
       data: {
         full_name: `${nombre} ${apellido}`.trim(),
         nombre,
