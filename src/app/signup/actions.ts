@@ -9,10 +9,14 @@ export async function signup(formData: FormData) {
   const supabase = await createClient()
   const origin = (await headers()).get('origin') || 'http://localhost:3000'
 
-  const nombre = formData.get('nombre') as string
-  const apellido = formData.get('apellido') as string
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
+  const nombre = (formData.get('nombre') as string || '').trim()
+  const apellido = (formData.get('apellido') as string || '').trim()
+  const email = (formData.get('email') as string || '').trim()
+  const password = (formData.get('password') as string || '').trim()
+
+  if (!nombre || !apellido || !email || !password) {
+    redirect(`/signup?error=${encodeURIComponent('Por favor, rellena todos los campos del formulario.')}`)
+  }
 
   const { data, error } = await supabase.auth.signUp({
     email,
