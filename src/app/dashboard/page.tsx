@@ -9,8 +9,8 @@ import WelcomeBanner from '@/components/WelcomeBanner'
 import { LogOut, Sparkles, FileText, Trophy, Zap, Users, Download } from 'lucide-react'
 import { solicitarMentoria, logout, switchAccount } from './actions'
 
-export default async function DashboardPage(props: { searchParams: Promise<{ ensayo?: string; bienvenido?: string; nuevo?: string; vista?: string }> | { ensayo?: string; bienvenido?: string; nuevo?: string; vista?: string } }) {
-  const searchParams = await Promise.resolve(props.searchParams)
+export default async function DashboardPage(props: { searchParams: Promise<{ ensayo?: string; bienvenido?: string; nuevo?: string; vista?: string }> }) {
+  const searchParams = await props.searchParams
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

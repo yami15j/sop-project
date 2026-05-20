@@ -107,8 +107,11 @@ export async function POST(req: Request) {
         }
       })
       
-      // Extraemos el texto de la respuesta
-      claudeResponse = message.content.find((c: any) => c.type === 'text')?.text || ''
+      // Extraemos el texto de la respuesta filtrando solo los bloques de tipo 'text'
+      claudeResponse = message.content
+        .filter((c): c is Anthropic.TextBlock => c.type === 'text')
+        .map(c => c.text)
+        .join('')
       
       if (!claudeResponse) {
         throw new Error('La IA no devolvió contenido de texto.')
@@ -125,9 +128,9 @@ export async function POST(req: Request) {
     const puntajeReal = scoreMatch ? Math.round(parseFloat(scoreMatch[1])) : 8
 
     // 4. Guardar en Base de Datos
-    const nombreUsuario = user.user_metadata?.full_name
-      || user.user_metadata?.name
-      || user.email?.split('@')[0]
+    const nombreUsuario = user?.user_metadata?.full_name
+      || user?.user_metadata?.name
+      || user?.email?.split('@')?.[0]
       || 'Desconocido'
 
     const { data: ensayoData, error: ensayoError } = await supabase
