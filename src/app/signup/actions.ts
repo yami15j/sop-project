@@ -26,14 +26,19 @@ export async function signup(formData: FormData) {
   })
 
   if (error) {
-    let mensaje = 'Ocurrió un error al crear la cuenta. Inténtalo de nuevo.'
+    console.error('[SIGNUP_ERROR] Error completo de Supabase:', error)
+    
+    let mensaje = `Error de registro: ${error.message}`
     if (error.message.includes('invalid format') || error.message.includes('Unable to validate email')) {
       mensaje = 'El correo electrónico ingresado no es válido. Verifica el formato (ej. nombre@correo.com).'
     } else if (error.message.includes('already registered') || error.message.includes('already been registered')) {
       mensaje = 'Este correo ya tiene una cuenta. ¿Quieres iniciar sesión?'
     } else if (error.message.includes('Password should be')) {
       mensaje = 'La contraseña debe tener al menos 6 caracteres.'
+    } else if (error.message.toLowerCase().includes('rate limit')) {
+      mensaje = 'Límite de solicitudes de correo excedido. Por favor, espera unos minutos antes de intentar de nuevo.'
     }
+    
     redirect(`/signup?error=${encodeURIComponent(mensaje)}`)
   }
 
