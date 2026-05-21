@@ -29,7 +29,7 @@ export default function LandingPage() {
           <Link href="/login" className="px-4 py-2 text-sm font-bold text-slate-300 hover:text-white transition-colors hidden sm:block">
             Iniciar Sesión
           </Link>
-          <Link href="/signup?msg=evaluar" className="bg-[#00A8E8] hover:bg-[#0090C7] text-white px-4 py-2 sm:px-6 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shadow-lg shadow-[#00A8E8]/30">
+          <Link href="/login?msg=evaluar" className="bg-[#00A8E8] hover:bg-[#0090C7] text-white px-4 py-2 sm:px-6 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shadow-lg shadow-[#00A8E8]/30">
             Evaluar Ensayo
           </Link>
         </div>
@@ -62,7 +62,7 @@ export default function LandingPage() {
               Democratizamos el acceso a la educación global. Usa nuestra Inteligencia Artificial para pulir tu carta de motivación, corregir errores y asegurar tu futuro.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/signup?msg=evaluar" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#00A8E8] hover:bg-[#0090C7] text-white px-6 py-3.5 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl text-sm sm:text-lg font-bold transition-all shadow-lg shadow-[#00A8E8]/30 hover:-translate-y-1">
+              <Link href="/login?msg=evaluar" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#00A8E8] hover:bg-[#0090C7] text-white px-6 py-3.5 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl text-sm sm:text-lg font-bold transition-all shadow-lg shadow-[#00A8E8]/30 hover:-translate-y-1">
                 Evaluar mi ensayo gratis
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </Link>
