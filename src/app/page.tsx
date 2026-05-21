@@ -36,7 +36,7 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section - Dark Navy Blue */}
-      <section className="relative z-10 pt-32 sm:pt-40 md:pt-48 pb-36 sm:pb-48 md:pb-60 px-4 sm:px-6 overflow-hidden bg-[#010B2B] text-white">
+      <section className="relative z-10 pt-32 sm:pt-40 md:pt-48 pb-24 sm:pb-32 md:pb-40 px-4 sm:px-6 overflow-hidden bg-[#010B2B] text-white">
         {/* Glows de fondo para el Hero oscuro */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-30 pointer-events-none">
           <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-[#00A8E8] rounded-full blur-[120px]"></div>
@@ -61,7 +61,7 @@ export default function LandingPage() {
             <p className="text-sm sm:text-base md:text-xl text-slate-300 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed">
               Democratizamos el acceso a la educación global. Usa nuestra Inteligencia Artificial para pulir tu carta de motivación, corregir errores y asegurar tu futuro.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20 sm:mb-28">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link href="/signup?msg=evaluar" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#00A8E8] hover:bg-[#0090C7] text-white px-6 py-3.5 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl text-sm sm:text-lg font-bold transition-all shadow-lg shadow-[#00A8E8]/30 hover:-translate-y-1">
                 Evaluar mi ensayo gratis
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -70,24 +70,25 @@ export default function LandingPage() {
                 ¿Cómo funciona?
               </Link>
             </div>
-
-            {/* Encabezado del "Cómo Funciona" integrado elegantemente aquí */}
-            <div className="max-w-3xl mx-auto mt-8">
-              <h2 className="text-2xl sm:text-3.5xl md:text-5xl font-extrabold text-white mb-4 sm:mb-6 tracking-tight">
-                ¿Cómo funciona nuestro evaluador?
-              </h2>
-              <p className="text-slate-300 max-w-2xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed">
-                En solo 3 simples pasos tendrás un análisis detallado que potenciará tu perfil para la universidad de tus sueños.
-              </p>
-            </div>
           </motion.div>
         </div>
       </section>
 
       {/* Cómo Funciona - Minimal Cards */}
-      <section id="como-funciona" className="pt-0 pb-16 sm:pb-24 md:pb-32 px-4 sm:px-6 relative z-20 bg-slate-50/50 border-b border-slate-100">
+      <section id="como-funciona" className="py-20 sm:py-28 md:py-36 px-4 sm:px-6 relative z-20 bg-slate-50/50 border-b border-slate-100">
         <div className="max-w-6xl mx-auto">
-          <div className="relative z-30 -mt-24 sm:-mt-32 md:-mt-40 grid md:grid-cols-3 gap-8">
+          
+          {/* Encabezado del "Cómo Funciona" de vuelta a su sección original */}
+          <div className="text-center mb-16 sm:mb-20 md:mb-24">
+            <h2 className="text-3xl sm:text-4.5xl md:text-5xl font-extrabold text-[#010B2B] mb-4 sm:mb-6 tracking-tight">
+              ¿Cómo funciona nuestro evaluador?
+            </h2>
+            <p className="text-slate-600 max-w-2xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed">
+              En solo 3 simples pasos tendrás un análisis detallado que potenciará tu perfil para la universidad de tus sueños.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
             {/* Paso 1 */}
             <motion.div
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}
