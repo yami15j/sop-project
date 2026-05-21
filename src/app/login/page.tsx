@@ -20,18 +20,18 @@ export default async function LoginPage({
         <div className="absolute -bottom-40 -left-20 w-[500px] h-[500px] bg-purple-600 rounded-full blur-[120px]"></div>
       </div>
 
-      <div className="w-full max-w-[480px] rounded-3xl sm:rounded-[32px] border border-white/10 bg-white px-5 py-6 sm:px-8 sm:py-10 shadow-[0_0_50px_rgba(0,168,232,0.15)] relative z-10">
+      <div className="w-full max-w-[400px] rounded-3xl sm:rounded-[32px] border border-white/10 bg-white px-5 py-6 sm:px-8 sm:py-10 shadow-[0_0_50px_rgba(0,168,232,0.15)] relative z-10">
 
         {/* Botón de regreso dentro de la tarjeta */}
-        <div className="mb-4 sm:mb-6 flex justify-start">
+        <div className="mb-6 flex justify-start">
           <Link href="/" className="inline-flex items-center gap-1.5 text-slate-400 hover:text-slate-700 font-bold text-xs transition-colors">
             <ArrowLeft className="w-3.5 h-3.5" />
             Volver al Inicio
           </Link>
         </div>
 
-        <div className="mb-5 sm:mb-8 text-center flex flex-col items-center">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center overflow-hidden rounded-full border border-slate-200 shadow-sm bg-black mb-3 sm:mb-4">
+        <div className="mb-8 text-center flex flex-col items-center">
+          <div className="w-16 h-16 flex items-center justify-center overflow-hidden rounded-full border border-slate-200 shadow-sm bg-black mb-4">
             <Image
               src="/logo.jpg"
               alt="Logo Comunidad del Intercambio"
@@ -41,16 +41,16 @@ export default async function LoginPage({
             />
           </div>
           {params?.msg === 'evaluar' && (
-            <div className="mb-2 sm:mb-3">
+            <div className="mb-3">
               <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full bg-[#00A8E8]/10 text-[#00A8E8] text-[9px] font-black uppercase tracking-widest border border-[#00A8E8]/20 shadow-sm">
                 <Sparkles className="w-3 h-3" /> Modo Evaluación
               </span>
             </div>
           )}
-          <h1 className={`font-extrabold tracking-tight text-[#010B2B] text-balance ${params?.msg === 'evaluar' ? 'text-base sm:text-[1.1rem] leading-snug' : 'text-xl sm:text-2xl'}`}>
+          <h1 className={`font-extrabold tracking-tight text-[#010B2B] text-balance ${params?.msg === 'evaluar' ? 'text-[1.1rem] leading-snug' : 'text-xl sm:text-2xl'}`}>
             {params?.msg === 'evaluar' ? 'Inicia sesión para evaluar tu ensayo 🚀' : '¡Bienvenido de vuelta!'}
           </h1>
-          <p className={`mt-1.5 sm:mt-2 text-slate-500 font-medium text-balance text-xs sm:text-sm ${params?.msg === 'evaluar' ? 'text-[13px] max-w-[280px]' : ''}`}>
+          <p className={`mt-2 text-slate-500 font-medium text-balance text-xs sm:text-sm ${params?.msg === 'evaluar' ? 'text-[13px] max-w-[280px]' : ''}`}>
             {params?.msg === 'evaluar' ? 'Ingresa a tu cuenta para desbloquear el feedback de la IA.' : 'Ingresa a tu cuenta para continuar con tus ensayos.'}
           </p>
         </div>
