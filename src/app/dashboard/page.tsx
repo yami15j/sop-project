@@ -68,7 +68,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
 
       {/* ── HEADER ── */}
       <header className="sticky top-0 z-40" style={{ background: 'linear-gradient(135deg, #010B2B 0%, #0d1f4a 100%)', borderBottom: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 4px 32px rgba(1,11,43,0.4)' }}>
-        <div className="max-w-7xl mx-auto px-6 h-[72px] flex justify-between items-center gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-[72px] flex justify-between items-center gap-4">
 
           {/* Logo + Título */}
           <div className="flex items-center gap-3">
@@ -90,7 +90,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
 
           {/* Derecha: avatar + logout */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div className="flex items-center gap-2.5 sm:px-3 sm:py-1.5 rounded-full sm:bg-white/5 sm:border sm:border-white/10">
               {user?.user_metadata?.avatar_url ? (
                 <img src={user.user_metadata.avatar_url} alt="Foto" className="w-8 h-8 rounded-full object-cover border-2 border-[#00A8E8]/40" />
               ) : (
@@ -106,14 +106,14 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
 
             <div className="flex gap-2">
               <form action={switchAccount}>
-                <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold transition-all bg-white/5 hover:bg-blue-500/15 border border-white/10 text-slate-100" title="Inicia sesión con otra cuenta">
+                <button className="flex items-center justify-center gap-1.5 w-9 h-9 sm:w-auto sm:h-auto sm:px-3.5 sm:py-2 rounded-xl text-[11px] font-bold transition-all bg-white/5 hover:bg-blue-500/15 border border-white/10 text-slate-100" title="Inicia sesión con otra cuenta">
                   <Users className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">Cambiar cuenta</span>
                 </button>
               </form>
 
               <form action={logout}>
-                <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold transition-all bg-white/5 hover:bg-red-500/15 border border-white/10 text-slate-100" title="Salir a la página principal">
+                <button className="flex items-center justify-center gap-1.5 w-9 h-9 sm:w-auto sm:h-auto sm:px-3.5 sm:py-2 rounded-xl text-[11px] font-bold transition-all bg-white/5 hover:bg-red-500/15 border border-white/10 text-slate-100" title="Salir a la página principal">
                   <LogOut className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">Cerrar sesión</span>
                 </button>
@@ -130,7 +130,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
           {/* Card 1: Ensayos enviados */}
           {ensayosUsados > 0 && ensayos?.[0] ? (
             <Link href={`/dashboard?ensayo=${ensayos[0].id}&vista=texto`}
-              className="group relative overflow-hidden rounded-2xl p-4 flex items-center gap-3 transition-all duration-300 hover:-translate-y-0.5"
+              className="group relative overflow-hidden rounded-2xl p-3.5 sm:p-4 flex items-center gap-2.5 sm:gap-3 transition-all duration-300 hover:-translate-y-0.5"
               style={{ background: 'linear-gradient(145deg,#ffffff,#f5f7ff)', border: '1px solid rgba(99,102,241,0.15)', boxShadow: '0 2px 16px rgba(99,102,241,0.08)', cursor: 'pointer' }}>
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" style={{ background: 'linear-gradient(145deg,rgba(99,102,241,0.04),rgba(59,130,246,0.05))' }} />
               <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: 'linear-gradient(to right,#6366f1,#3b82f6)' }} />
@@ -145,14 +145,14 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
               </div>
             </Link>
           ) : (
-            <div className="relative overflow-hidden rounded-2xl p-4 flex items-center gap-3"
+            <div className="relative overflow-hidden rounded-2xl p-3.5 sm:p-4 flex items-center gap-2.5 sm:gap-3"
               style={{ background: 'linear-gradient(145deg,#ffffff,#f5f7ff)', border: '1px solid rgba(99,102,241,0.12)', boxShadow: '0 2px 12px rgba(99,102,241,0.05)' }}>
               <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: 'linear-gradient(to right,#6366f1,#3b82f6)' }} />
               <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 relative z-10"
                 style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)', boxShadow: '0 4px 12px rgba(99,102,241,0.3)' }}>
                 <FileText className="w-4 h-4 text-white" />
               </div>
-              <div>
+              <div className="min-w-0">
                 <div className="text-2xl font-black leading-none tracking-tight" style={{ color: '#1e1b4b' }}>{ensayosUsados}</div>
                 <div className="text-[11px] font-semibold leading-tight mt-0.5 uppercase tracking-wide" style={{ color: '#6b7280' }}>Ensayos</div>
               </div>
@@ -162,7 +162,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
           {/* Card 2: Créditos restantes */}
           {ensayosRestantes === 0 ? (
             <Link href="/dashboard#mentoria"
-              className="group relative overflow-hidden rounded-2xl p-4 flex items-center gap-3 transition-all duration-300 hover:-translate-y-0.5"
+              className="group relative overflow-hidden rounded-2xl p-3.5 sm:p-4 flex items-center gap-2.5 sm:gap-3 transition-all duration-300 hover:-translate-y-0.5"
               style={{ background: 'linear-gradient(145deg,#fff8f0,#fff3e8)', border: '1px solid rgba(249,115,22,0.2)', boxShadow: '0 2px 16px rgba(249,115,22,0.08)', cursor: 'pointer' }}>
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" style={{ background: 'linear-gradient(145deg,rgba(249,115,22,0.04),rgba(245,158,11,0.06))' }} />
               <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: 'linear-gradient(to right,#f97316,#f59e0b)' }} />
@@ -170,21 +170,21 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
                 style={{ background: 'linear-gradient(135deg,#f97316,#ea580c)', boxShadow: '0 4px 12px rgba(249,115,22,0.4)' }}>
                 <Zap className="w-4 h-4 text-white" />
               </div>
-              <div className="flex-1 relative z-10">
+              <div className="flex-1 min-w-0 relative z-10">
                 <div className="text-2xl font-black leading-none tracking-tight" style={{ color: '#c2410c' }}>0</div>
                 <div className="text-[11px] font-semibold leading-tight mt-0.5 uppercase tracking-wide" style={{ color: '#92400e' }}>Créditos</div>
                 <div className="text-[10px] font-bold mt-1 opacity-0 group-hover:opacity-100 transition-all duration-300" style={{ color: '#f97316' }}>{lead ? 'Ver solicitud →' : 'Solicitar →'}</div>
               </div>
             </Link>
           ) : (
-            <div className="relative overflow-hidden rounded-2xl p-4 flex items-center gap-3"
+            <div className="relative overflow-hidden rounded-2xl p-3.5 sm:p-4 flex items-center gap-2.5 sm:gap-3"
               style={{ background: 'linear-gradient(145deg,#f0f9ff,#e8f4fd)', border: '1px solid rgba(0,168,232,0.2)', boxShadow: '0 2px 16px rgba(0,168,232,0.07)' }}>
               <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: 'linear-gradient(to right,#00A8E8,#0070b8)' }} />
               <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
                 style={{ background: 'linear-gradient(135deg,#00A8E8,#0078c8)', boxShadow: '0 4px 12px rgba(0,168,232,0.4)' }}>
                 <Zap className="w-4 h-4 text-white" />
               </div>
-              <div>
+              <div className="min-w-0">
                 <div className="text-2xl font-black leading-none tracking-tight" style={{ color: '#0369a1' }}>{ensayosRestantes}</div>
                 <div className="text-[11px] font-semibold leading-tight mt-0.5 uppercase tracking-wide" style={{ color: '#0284c7' }}>Créditos</div>
               </div>
@@ -194,7 +194,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
           {/* Card 3: Puntaje promedio */}
           {puntajePromedio !== null && ensayos?.[0] ? (
             <Link href={`/dashboard?ensayo=${ensayos[0].id}`}
-              className="group relative overflow-hidden rounded-2xl p-4 flex items-center gap-3 transition-all duration-300 hover:-translate-y-0.5"
+              className="group relative overflow-hidden rounded-2xl p-3.5 sm:p-4 flex items-center gap-2.5 sm:gap-3 transition-all duration-300 hover:-translate-y-0.5"
               style={{ background: 'linear-gradient(145deg,#f0fdf7,#ecfdf5)', border: '1px solid rgba(16,185,129,0.18)', boxShadow: '0 2px 16px rgba(16,185,129,0.08)', cursor: 'pointer' }}>
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" style={{ background: 'linear-gradient(145deg,rgba(16,185,129,0.05),rgba(5,150,105,0.07))' }} />
               <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: 'linear-gradient(to right,#10b981,#059669)' }} />
@@ -202,21 +202,21 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
                 style={{ background: 'linear-gradient(135deg,#10b981,#059669)', boxShadow: '0 4px 12px rgba(16,185,129,0.4)' }}>
                 <Trophy className="w-4 h-4 text-white" />
               </div>
-              <div className="flex-1 relative z-10">
+              <div className="flex-1 min-w-0 relative z-10">
                 <div className="text-2xl font-black leading-none tracking-tight" style={{ color: '#065f46' }}>{puntajePromedio}</div>
                 <div className="text-[11px] font-semibold leading-tight mt-0.5 uppercase tracking-wide" style={{ color: '#047857' }}>Puntaje</div>
                 <div className="text-[10px] font-bold mt-1 opacity-0 group-hover:opacity-100 transition-all duration-300" style={{ color: '#10b981' }}>Ver feedback →</div>
               </div>
             </Link>
           ) : (
-            <div className="relative overflow-hidden rounded-2xl p-4 flex items-center gap-3"
+            <div className="relative overflow-hidden rounded-2xl p-3.5 sm:p-4 flex items-center gap-2.5 sm:gap-3"
               style={{ background: 'linear-gradient(145deg,#f0fdf7,#ecfdf5)', border: '1px solid rgba(16,185,129,0.15)', boxShadow: '0 2px 12px rgba(16,185,129,0.06)' }}>
               <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: 'linear-gradient(to right,#10b981,#059669)' }} />
               <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
                 style={{ background: 'linear-gradient(135deg,#10b981,#059669)', boxShadow: '0 4px 12px rgba(16,185,129,0.35)' }}>
                 <Trophy className="w-4 h-4 text-white" />
               </div>
-              <div>
+              <div className="min-w-0">
                 <div className="text-2xl font-black leading-none tracking-tight" style={{ color: '#065f46' }}>{puntajePromedio !== null ? `${puntajePromedio}` : '—'}</div>
                 <div className="text-[11px] font-semibold leading-tight mt-0.5 uppercase tracking-wide" style={{ color: '#047857' }}>Puntaje</div>
               </div>
@@ -224,7 +224,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
           )}
 
           {/* Card 4: IA Activa */}
-          <div className="relative overflow-hidden rounded-2xl p-4 flex items-center gap-3"
+          <div className="relative overflow-hidden rounded-2xl p-3.5 sm:p-4 flex items-center gap-2.5 sm:gap-3"
             style={{ background: 'linear-gradient(145deg,#010B2B,#0d1f4a)', border: '1px solid rgba(0,168,232,0.25)', boxShadow: '0 2px 16px rgba(0,168,232,0.1)' }}>
             <div className="absolute -top-5 -right-5 w-16 h-16 rounded-full opacity-15" style={{ background: 'radial-gradient(circle,#00A8E8,transparent)' }} />
             <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: 'linear-gradient(to right,#00A8E8,#7c3aed)' }} />
@@ -232,12 +232,12 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
               style={{ background: 'rgba(0,168,232,0.15)', border: '1px solid rgba(0,168,232,0.3)', boxShadow: '0 4px 12px rgba(0,168,232,0.2)' }}>
               <Sparkles className="w-4 h-4 text-[#00A8E8]" />
             </div>
-            <div className="relative z-10">
+            <div className="relative z-10 min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" style={{ boxShadow: '0 0 6px rgba(52,211,153,0.8)' }} />
-                <span className="text-white font-extrabold text-sm tracking-tight">IA Activa</span>
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" style={{ boxShadow: '0 0 6px rgba(52,211,153,0.8)' }} />
+                <span className="text-white font-extrabold text-sm tracking-tight truncate">IA Activa</span>
               </div>
-              <div className="text-[11px] font-semibold leading-tight mt-0.5 uppercase tracking-wide" style={{ color: 'rgba(148,163,184,0.85)' }}>Claude 4.6 Sonnet</div>
+              <div className="text-[11px] font-semibold leading-tight mt-0.5 uppercase tracking-wide text-slate-400 truncate">Claude 4.6 Sonnet</div>
             </div>
           </div>
 
@@ -266,7 +266,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
                   /* ─ VISTA SEGÚN PARÁMETRO ─ */
                   <div className="rounded-3xl overflow-hidden" style={{ background: 'white', border: '1px solid rgba(1,11,43,0.09)', boxShadow: '0 8px 40px rgba(0,0,0,0.06)' }}>
                     {/* Header */}
-                    <div className="px-8 py-6 flex flex-col md:flex-row justify-between md:items-center gap-4" style={{ background: 'linear-gradient(135deg, #010B2B 0%, #0d1f4a 100%)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                    <div className="px-3.5 sm:px-8 py-5 sm:py-6 flex flex-col md:flex-row justify-between md:items-center gap-4" style={{ background: 'linear-gradient(135deg, #010B2B 0%, #0d1f4a 100%)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
                       <div>
                         <h2 className="text-2xl font-extrabold text-white mb-2">
                           {vistaTexto ? '📄 Mi Ensayo' : 'Resultados del Análisis'}
@@ -321,7 +321,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
                       </div>
                     </div>
 
-                    <div className="p-8 md:p-10">
+                    <div className="p-3.5 sm:p-8 md:p-10">
                       {vistaTexto ? (
                         /* ── VISTA SOLO TEXTO DEL ENSAYO ── */
                         <div>
@@ -335,7 +335,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
                             </span>
                           </div>
                           <div
-                            className="rounded-2xl p-6 text-slate-700 leading-[1.9] text-[15px] whitespace-pre-wrap"
+                            className="rounded-2xl p-4 sm:p-6 text-slate-700 leading-relaxed sm:leading-[1.9] text-[13px] sm:text-[15px] text-justify whitespace-pre-wrap"
                             style={{ background: '#f8fafc', border: '1px solid #e2e8f0', fontFamily: 'Georgia, serif', minHeight: '400px' }}
                           >
                             {selectedEnsayo.contenido || 'No hay texto disponible.'}
@@ -363,19 +363,19 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
                 return (
                   /* ─ VISTA MENTORÍA ─ */
                   <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <div className="mb-6 flex items-center justify-between">
+                    <div className="mb-6 flex items-center justify-between gap-3">
                       <div>
-                        <h2 className="text-2xl font-extrabold text-[#010B2B]">Mentoría Premium</h2>
-                        <p className="text-slate-500 mt-1">Lleva tu aplicación al siguiente nivel con expertos.</p>
+                        <h2 className="text-xl sm:text-2xl font-extrabold text-[#010B2B]">Mentoría Premium</h2>
+                        <p className="text-xs sm:text-sm text-slate-500 mt-1">Lleva tu aplicación al siguiente nivel con expertos.</p>
                       </div>
                       {ensayosRestantes > 0 && (
-                        <Link href="/dashboard" className="text-sm font-bold text-[#00A8E8] hover:underline">
+                        <Link href="/dashboard" className="text-xs sm:text-sm font-bold text-[#00A8E8] hover:underline flex-shrink-0">
                           ← Volver a analizar
                         </Link>
                       )}
                     </div>
                     <div id="mentoria" className="rounded-3xl overflow-hidden relative" style={{ background: 'linear-gradient(160deg,#0a0f2e 0%,#0d1f4a 50%,#0f1e3d 100%)', border: '1px solid rgba(249,115,22,0.2)', boxShadow: '0 20px 60px rgba(1,11,43,0.5)' }}>
-                      <div className="relative p-7">
+                      <div className="relative p-5 sm:p-8">
                         <MentoriaForm
                           nombreDefault={user?.user_metadata?.full_name || user?.user_metadata?.name || ''}
                           emailDefault={user?.email || ''}

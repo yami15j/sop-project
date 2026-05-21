@@ -111,7 +111,7 @@ export default function AnalyzeForm() {
     <div className="rounded-3xl overflow-hidden" style={{ background: 'white', border: '1px solid rgba(1,11,43,0.08)', boxShadow: '0 8px 40px rgba(0,0,0,0.06)' }}>
 
       {/* Header del form */}
-      <div className="px-8 py-6 flex items-center gap-3" style={{ background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)', borderBottom: '1px solid #e2e8f0' }}>
+      <div className="px-5 sm:px-8 py-4 sm:py-6 flex items-center gap-3" style={{ background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)', borderBottom: '1px solid #e2e8f0' }}>
         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #00A8E8, #0070b8)' }}>
           <Sparkles className="w-5 h-5 text-white" />
         </div>
@@ -121,7 +121,7 @@ export default function AnalyzeForm() {
         </div>
       </div>
 
-      <div className="p-8">
+      <div className="p-5 sm:p-8">
         {/* Error */}
         {error && (
           <div className="flex items-start gap-3 px-4 py-3.5 rounded-xl mb-6 text-sm font-medium" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626' }}>
@@ -218,12 +218,12 @@ export default function AnalyzeForm() {
 
             {/* Textarea del ensayo */}
             <div>
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center justify-between mb-2.5">
                 <label className="flex items-center gap-1.5 text-xs text-slate-500 uppercase font-bold tracking-wide">
                   <AlignLeft className="w-3.5 h-3.5" />
                   Tu Ensayo / Personal Statement
                 </label>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   {fileName && (
                     <div className="flex items-center gap-2 px-2 py-1 bg-blue-50 border border-blue-100 rounded-md animate-in fade-in zoom-in duration-300">
                       <div className="w-5 h-7 bg-white border border-blue-200 rounded flex items-center justify-center overflow-hidden shadow-sm">

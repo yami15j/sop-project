@@ -96,12 +96,12 @@ export default function MentoriaForm({ nombreDefault = '', emailDefault = '', be
     <form onSubmit={handleSubmit} noValidate>
 
       {/* ── Barra de progreso ── */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.4)' }}>
+      <div className="mb-4 sm:mb-6">
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.4)' }}>
             Progreso
           </span>
-          <span className="text-[11px] font-black" style={{ color: isValid ? '#4ade80' : '#fb923c' }}>
+          <span className="text-[10px] sm:text-[11px] font-black" style={{ color: isValid ? '#4ade80' : '#fb923c' }}>
             {filledCount} / {CAMPOS.length} campos
           </span>
         </div>
@@ -129,7 +129,7 @@ export default function MentoriaForm({ nombreDefault = '', emailDefault = '', be
       )}
 
       {/* ── Grid de campos ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-5 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-4 sm:gap-y-5 mb-5 sm:mb-6">
         {CAMPOS.map(({ name, label, type, placeholder, icon: Icon }) => {
           const hasError = !!(touched[name] && errors[name])
           const isFocused = focused === name
@@ -148,10 +148,10 @@ export default function MentoriaForm({ nombreDefault = '', emailDefault = '', be
           return (
             <div key={name}>
               {/* Label */}
-              <label className="flex items-center gap-1.5 mb-2"
+              <label className="flex items-center gap-1.5 mb-1.5"
                 style={{ color: hasError ? '#f87171' : isOk ? '#4ade80' : 'rgba(255,255,255,0.45)' }}>
                 <Icon className="w-3 h-3" style={{ flexShrink: 0 }} />
-                <span className="text-[10px] font-black uppercase tracking-widest">{label}</span>
+                <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest">{label}</span>
               </label>
 
               {/* Input wrapper */}
@@ -165,12 +165,10 @@ export default function MentoriaForm({ nombreDefault = '', emailDefault = '', be
                   onBlur={() => handleBlur(name)}
                   placeholder={placeholder}
                   disabled={isPending}
-                  className="w-full text-sm font-medium outline-none transition-all duration-200 disabled:opacity-50 placeholder:font-normal"
+                  className="w-full text-[13px] sm:text-sm font-medium outline-none transition-all duration-200 disabled:opacity-50 placeholder:font-normal py-2.5 sm:py-3 pl-3.5 pr-10 rounded-xl"
                   style={{
                     background: isFocused ? 'rgba(255,255,255,0.09)' : 'rgba(255,255,255,0.05)',
                     border: `1.5px solid ${borderColor}`,
-                    borderRadius: '12px',
-                    padding: '11px 36px 11px 13px',
                     color: '#f1f5f9',
                     boxShadow: glowColor,
                   }}
@@ -202,14 +200,12 @@ export default function MentoriaForm({ nombreDefault = '', emailDefault = '', be
         <button
           type="submit"
           disabled={isPending}
-          className="w-full flex items-center justify-center gap-2.5 font-black text-sm tracking-wide transition-all duration-300 disabled:cursor-wait"
+          className="w-full flex items-center justify-center gap-2 font-bold text-xs sm:text-sm tracking-wide transition-all duration-300 disabled:cursor-wait py-3 sm:py-3.5 px-6 sm:px-8 rounded-xl"
           style={{
             background: isValid
               ? 'linear-gradient(135deg, #f97316 0%, #fb923c 50%, #f59e0b 100%)'
               : 'rgba(255,255,255,0.06)',
             border: isValid ? 'none' : '1.5px solid rgba(255,255,255,0.12)',
-            borderRadius: '14px',
-            padding: '14px 24px',
             color: isValid ? 'white' : 'rgba(255,255,255,0.3)',
             boxShadow: isValid ? '0 8px 32px rgba(249,115,22,0.4), 0 0 0 1px rgba(249,115,22,0.2)' : 'none',
             transform: isPending ? 'scale(0.99)' : 'scale(1)',
@@ -224,7 +220,7 @@ export default function MentoriaForm({ nombreDefault = '', emailDefault = '', be
             </>
           ) : isValid ? (
             <>
-              <Send className="w-4 h-4" />
+              <Send className="w-4 h-4 animate-bounce" />
               <span>Solicitar Mentoría Premium</span>
             </>
           ) : (

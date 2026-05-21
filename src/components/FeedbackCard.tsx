@@ -50,7 +50,7 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
           const parts = paragraph.split(/(<texto>[\s\S]*?<\/texto>\s*<sugerencia>[\s\S]*?<\/sugerencia>|(?:\{[\s\S]*?\})?\s*\[SUGERENCIA:[\s\S]*?\])/gi)
           
           return (
-            <p key={pIndex} className="leading-[2] text-[15px] text-slate-700 text-justify">
+            <div key={pIndex} className="leading-relaxed sm:leading-[1.9] text-[13px] sm:text-[15px] text-slate-700 text-justify">
               {parts.map((part, index) => {
                 const xmlMatch = part.match(/<texto>([\s\S]*?)<\/texto>\s*<sugerencia>([\s\S]*?)<\/sugerencia>/i)
                 const matchWithBraces = part.match(/\{([\s\S]*?)\}\s*\[SUGERENCIA:([\s\S]*?)\]/i)
@@ -63,7 +63,7 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
                   return (
                     <span key={index} className="inline">
                       {originalText && (
-                        <span className="text-slate-600 font-bold">
+                        <span className="inline bg-indigo-50 text-indigo-950 border-b-2 border-indigo-200 px-1 py-0.5 rounded font-bold shadow-[0_1px_2px_rgba(99,102,241,0.05)] transition-all hover:bg-indigo-100/80">
                           {originalText}
                         </span>
                       )}
@@ -89,7 +89,7 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
                                 </strong>
                               </span>
                               
-                              <span className="block text-[12px] leading-relaxed text-slate-600">
+                              <span className="block text-[11px] sm:text-[12px] leading-relaxed text-slate-600">
                                 {suggestion.replace(/\]$/, '')}
                               </span>
                             </span>
@@ -101,7 +101,7 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
                 }
                 return <span key={index}>{part}</span>
               })}
-            </p>
+            </div>
           )
         })}
       </div>
@@ -141,7 +141,7 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
   }
 
   return (
-    <div className="mt-6 p-6 bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50 text-slate-800">
+    <div className="mt-2 text-slate-800">
 
       {/* ── INTERFAZ DEL DASHBOARD ── */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 pb-6 border-b border-slate-100 gap-4">
@@ -175,10 +175,10 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
             <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
             <h5 className="font-bold text-[11px] text-emerald-900 uppercase tracking-widest">Tus Fortalezas</h5>
           </div>
-          <div className="p-4">
+          <div className="p-3.5 sm:p-4">
             <ul className="space-y-2">
               {fortalezas.map((f, i) => (
-                <li key={i} className="flex items-start gap-2.5 text-[13px] text-slate-700">
+                <li key={i} className="flex items-start gap-2.5 text-[12px] sm:text-[13px] text-slate-700">
                   <span className="w-4 h-4 flex-shrink-0 flex items-center justify-center rounded-full bg-emerald-100 text-emerald-700 text-[9px] font-bold mt-0.5">{i + 1}</span>
                   <span className="leading-snug">{f.replace(/^\d+\.\s*/, '')}</span>
                 </li>
@@ -192,10 +192,10 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
             <AlertTriangle className="w-3.5 h-3.5 text-orange-600" />
             <h5 className="font-bold text-[11px] text-orange-900 uppercase tracking-widest">Áreas de Mejora</h5>
           </div>
-          <div className="p-4">
+          <div className="p-3.5 sm:p-4">
             <ul className="space-y-2">
               {mejoras.map((m, i) => (
-                <li key={i} className="flex items-start gap-2.5 text-[13px] text-slate-700">
+                <li key={i} className="flex items-start gap-2.5 text-[12px] sm:text-[13px] text-slate-700">
                   <span className="w-4 h-4 flex-shrink-0 flex items-center justify-center rounded-full bg-orange-100 text-orange-700 text-[9px] font-bold mt-0.5">{i + 1}</span>
                   <span className="leading-snug">{m.replace(/^\d+\.\s*/, '')}</span>
                 </li>
@@ -217,14 +217,14 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
             </div>
           </div>
 
-          <div className="bg-[#F8FAFC] rounded-[32px] p-8 md:p-12 border border-slate-100/50 shadow-inner">
+          <div className="bg-[#F8FAFC] rounded-2xl sm:rounded-[32px] px-3 py-5 sm:p-8 md:p-12 border border-slate-100/50 shadow-inner">
             {renderAnnotatedEssay(annotatedSection)}
           </div>
         </div>
       )}
 
       {recomendacionStr && recomendacionStr.trim().length > 0 && (
-        <div className="mt-10 mb-8 bg-gradient-to-br from-indigo-50/80 to-white border border-indigo-100 rounded-2xl p-6 md:p-8 shadow-sm relative overflow-hidden">
+        <div className="mt-10 mb-8 bg-gradient-to-br from-indigo-50/80 to-white border border-indigo-100 rounded-2xl p-4 sm:p-6 md:p-8 shadow-sm relative overflow-hidden">
           <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-500 rounded-l-2xl"></div>
           <div className="flex flex-col md:flex-row items-center md:items-start gap-5 relative z-10 text-center md:text-left">
             <div className="flex-shrink-0 w-12 h-12 bg-white rounded-full flex items-center justify-center text-indigo-600 shadow-md border border-indigo-50">
@@ -232,7 +232,7 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
             </div>
             <div className="flex-1">
               <h4 className="text-[#010B2B] font-bold text-lg mb-2">Recomendación de la IA</h4>
-              <p className="text-slate-600 text-[15px] leading-relaxed">
+              <p className="text-slate-600 text-[13px] sm:text-[15px] leading-relaxed">
                 {recomendacionStr.replace(/RECOMENDACIÓN FINAL:/i, '').trim()}
               </p>
             </div>

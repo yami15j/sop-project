@@ -45,7 +45,7 @@ export default function WelcomeBanner({ nombre, inicial, esCuentaNueva = false }
         closing ? 'opacity-0 -translate-y-4 max-h-0' : 'opacity-100 translate-y-0 max-h-96'
       }`}
     >
-      <div className="relative border-b py-5 px-6" style={{ background: 'linear-gradient(135deg, #010B2B 0%, #0d1f4a 100%)', borderColor: 'rgba(255,255,255,0.08)' }}>
+      <div className="relative border-b py-3.5 px-4 sm:py-5 sm:px-6" style={{ background: 'linear-gradient(135deg, #010B2B 0%, #0d1f4a 100%)', borderColor: 'rgba(255,255,255,0.08)' }}>
 
         {/* Glows decorativos */}
         <div className="absolute top-0 left-1/4 w-64 h-full blur-[80px] opacity-20 pointer-events-none" style={{ background: glowColor1 }} />
@@ -66,14 +66,14 @@ export default function WelcomeBanner({ nombre, inicial, esCuentaNueva = false }
 
         {/* Contenido */}
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-6 relative z-10">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
 
             {/* Ícono / avatar */}
-            <div className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg"
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg"
               style={{ background: esCuentaNueva ? 'linear-gradient(135deg, #7c3aed, #a855f7)' : 'linear-gradient(135deg, #00A8E8, #0060b0)' }}>
               {esCuentaNueva
-                ? <PartyPopper className="w-5 h-5 text-white" />
-                : <Sparkles className="w-5 h-5 text-white" />
+                ? <PartyPopper className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                : <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               }
             </div>
 
@@ -81,12 +81,12 @@ export default function WelcomeBanner({ nombre, inicial, esCuentaNueva = false }
               {/* Etiqueta chip */}
               <div className="flex items-center gap-1.5 mb-0.5">
                 <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: iconColor }} />
-                <span className="text-xs font-bold uppercase tracking-widest" style={{ color: iconColor }}>
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest" style={{ color: iconColor }}>
                   {etiqueta}
                 </span>
               </div>
               {/* Título principal */}
-              <h2 className="text-white font-extrabold text-lg md:text-xl leading-tight">
+              <h2 className="text-white font-extrabold text-sm sm:text-lg md:text-xl leading-tight">
                 {titulo}
               </h2>
               {/* Subtítulo */}

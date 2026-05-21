@@ -138,16 +138,15 @@ export default function DashboardSidebar({ ensayos, selectedEnsayoId, ensayosRes
   return (
     <>
       {/* ── HAMBURGUESA MÓVIL ── */}
-      <div className="lg:hidden flex items-center justify-between mb-6 px-5 py-4 rounded-2xl" style={{ background: 'white', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-        <span className="font-extrabold text-[#010B2B] text-base">
+      <div className="lg:hidden flex items-center justify-between mb-6 px-4 py-3 sm:px-5 sm:py-4 rounded-2xl bg-white border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+        <span className="font-extrabold text-[#010B2B] text-sm sm:text-base">
           {selectedEnsayoId ? 'Ver Evaluación' : 'Nuevo Ensayo'}
         </span>
         <button
           onClick={() => setMobileOpen(true)}
-          className="flex items-center gap-2 text-slate-700 font-bold text-sm px-4 py-2 rounded-xl transition-all"
-          style={{ background: '#f1f5f9', border: '1px solid #e2e8f0' }}
+          className="flex items-center gap-2 text-[#00A8E8] font-bold text-xs sm:text-sm px-3.5 py-2 rounded-xl transition-all bg-[#00A8E8]/8 border border-[#00A8E8]/20 hover:bg-[#00A8E8]/12"
         >
-          <Menu className="w-4 h-4" />
+          <Menu className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           Mis Ensayos
         </button>
       </div>
