@@ -91,6 +91,10 @@ export default function ConfirmPage() {
             >
               ¿Ya verificaste? Inicia sesión aquí
             </Link>
+            
+            <p className="text-[10px] text-blue-200/40 mt-3 max-w-[280px] mx-auto leading-relaxed">
+              Si confirmaste tu cuenta desde otro dispositivo o pestaña, puedes hacer clic arriba para iniciar sesión directamente.
+            </p>
           </div>
         </div>
       </motion.div>

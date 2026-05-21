@@ -57,5 +57,13 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect(`/signup/confirm`)
+
+  if (data?.session) {
+    // Si la confirmación de correo está desactivada en Supabase, inicia sesión de inmediato
+    redirect('/dashboard?bienvenido=1')
+  } else {
+    // Si está activada, pide confirmación por correo
+    redirect('/signup/confirm')
+  }
 }
+

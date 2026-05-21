@@ -2,6 +2,7 @@ import { signup } from './actions'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft, Sparkles } from 'lucide-react'
+import ErrorBanner from '@/components/ErrorBanner'
 
 export default async function SignupPage({
   searchParams,
@@ -125,10 +126,10 @@ export default async function SignupPage({
           </div>
 
           {params?.error && (
-            <div className="rounded-xl bg-red-50 border border-red-200 p-4 text-sm text-red-600 flex items-start gap-2">
-              <span>⚠️</span> {params.error}
-            </div>
+            <ErrorBanner error={params.error} />
           )}
+
+
 
           <div className="mt-4 flex flex-col gap-4">
             <button

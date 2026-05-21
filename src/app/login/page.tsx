@@ -2,6 +2,7 @@ import { login, signup } from './actions'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
+import ErrorBanner from '@/components/ErrorBanner'
 
 export default async function LoginPage({
   searchParams,
@@ -82,15 +83,10 @@ export default async function LoginPage({
           </div>
 
           {params?.error && (
-            <div className="rounded-2xl bg-red-50 border border-red-100 px-4 py-3.5 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                <span className="text-base">⚠️</span>
-              </div>
-              <p className="text-sm font-medium text-red-700 leading-snug">
-                {decodeURIComponent(params.error)}
-              </p>
-            </div>
+            <ErrorBanner error={params.error} />
           )}
+
+
 
           <div className="mt-4 flex flex-col gap-4">
             <button
