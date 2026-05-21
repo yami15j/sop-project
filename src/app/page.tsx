@@ -36,14 +36,14 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section - Dark Navy Blue */}
-      <section className="relative z-10 pt-32 sm:pt-40 md:pt-48 pb-24 sm:pb-32 md:pb-40 px-4 sm:px-6 overflow-hidden bg-[#010B2B] text-white">
+      <section className="relative z-10 min-h-screen flex flex-col justify-center items-center pt-24 pb-12 sm:pb-16 px-4 sm:px-6 overflow-hidden bg-[#010B2B] text-white">
         {/* Glows de fondo para el Hero oscuro */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-30 pointer-events-none">
           <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-[#00A8E8] rounded-full blur-[120px]"></div>
           <div className="absolute top-20 -left-20 w-96 h-96 bg-purple-600 rounded-full blur-[100px]"></div>
         </div>
 
-        <div className="max-w-5xl mx-auto text-center relative z-10">
+        <div className="w-full max-w-5xl mx-auto text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
