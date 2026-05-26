@@ -188,7 +188,7 @@ export async function POST(req: Request) {
     if (claudeResponse.includes('[ERROR: NO_ES_UN_ENSAYO]')) {
       console.warn(`[VALIDACIÓN] Intento de análisis fallido de documento no válido por el usuario: ${user.email}`)
       return NextResponse.json(
-        { error: '¡Lo sentimos! Nuestro análisis preliminar de inteligencia artificial determinó que este texto no califica como un ensayo de postulación, declaración de propósito (SOP) o carta de motivación. Por favor, asegúrate de subir o pegar únicamente el documento con el que postulas a tu beca.' },
+        { error: 'El análisis determinó que este texto no califica como ensayo, SOP o carta de motivación. Por favor, sube únicamente tu documento de postulación.' },
         { status: 400 }
       )
     }

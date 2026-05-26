@@ -487,8 +487,8 @@ export default function AnalyzeForm({ ensayosRestantes = 2, hasLead = false }: A
               </div>
 
               {error && (
-                <p className="mb-3 text-xs font-bold text-red-500 animate-in fade-in duration-200 leading-relaxed">
-                  * {error === "No tienes créditos de análisis disponibles. Por favor, agenda una mentoría personalizada para revisar tu ensayo." ? (
+                <p className="mb-3 text-[11px] font-semibold text-red-500 animate-in fade-in duration-200 leading-relaxed">
+                  {error === "No tienes créditos de análisis disponibles. Por favor, agenda una mentoría personalizada para revisar tu ensayo." ? (
                     <>
                       No tienes créditos de análisis disponibles. Por favor,{' '}
                       <Link href="/dashboard?vista=mentoria" className="underline hover:text-red-600 transition-colors">
