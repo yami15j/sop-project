@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft, Sparkles } from 'lucide-react'
 import ErrorBanner from '@/components/ErrorBanner'
+import PasswordInput from '@/components/PasswordInput'
 
 export default function SignupPage({
   searchParams,
@@ -134,16 +135,14 @@ export default function SignupPage({
             >
               Contraseña
             </label>
-            <input
+            <PasswordInput
               id="password"
               name="password"
-              type="password"
               placeholder="••••••••"
               required
               onChange={(e) => {
                 sessionStorage.setItem('signup_password', e.target.value)
               }}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 sm:px-4 sm:py-3.5 text-sm sm:text-base text-slate-900 placeholder-slate-400 outline-none transition-all focus:bg-white focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]"
             />
           </div>
 
