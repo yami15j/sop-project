@@ -30,7 +30,12 @@ export default function DashboardSidebar({ ensayos, selectedEnsayoId, ensayosRes
       {/* Nuevo Ensayo Button */}
       <Link
         href="/dashboard"
-        onClick={() => setMobileOpen(false)}
+        onClick={(e) => {
+          setMobileOpen(false)
+          // Forzar una navegación limpia/recarga para limpiar todo el estado del formulario (PDFs, textos, errores y referencias en memoria)
+          e.preventDefault()
+          window.location.href = '/dashboard'
+        }}
         className="group flex items-center gap-3 px-5 py-4 rounded-2xl transition-all font-bold"
         style={
           !selectedEnsayoId
