@@ -7,11 +7,12 @@ import MentoriaForm from '@/components/MentoriaForm'
 import DashboardSidebar from '@/components/DashboardSidebar'
 import WelcomeBanner from '@/components/WelcomeBanner'
 import VerificationBanner from '@/components/VerificationBanner'
+import PasswordUpdatedBanner from '@/components/PasswordUpdatedBanner'
 import CollapsibleStats from '@/components/CollapsibleStats'
 import { LogOut, Sparkles, FileText, Trophy, Zap, Users, Download } from 'lucide-react'
 import { solicitarMentoria, logout, switchAccount } from './actions'
 
-export default async function DashboardPage(props: { searchParams: Promise<{ ensayo?: string; bienvenido?: string; nuevo?: string; vista?: string; verificado?: string }> }) {
+export default async function DashboardPage(props: { searchParams: Promise<{ ensayo?: string; bienvenido?: string; nuevo?: string; vista?: string; verificado?: string; contrasena_actualizada?: string }> }) {
   const searchParams = await props.searchParams
 
   const supabase = await createClient()
@@ -51,6 +52,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
   const vistaTexto = searchParams?.vista === 'texto'
   const mostrarBienvenida = searchParams?.bienvenido === '1'
   const mostrarVerificado = searchParams?.verificado === '1'
+  const contrasenaActualizada = searchParams?.contrasena_actualizada === '1'
   const esCuentaNueva = searchParams?.nuevo === '1'
   const nombreUsuario = user?.user_metadata?.nombre || user?.user_metadata?.full_name?.split(' ')[0] || null
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || 'Mi cuenta'
@@ -63,13 +65,18 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
   return (
     <div className="min-h-screen font-sans" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%)' }}>
 
+      {/* Notificación de contraseña actualizada */}
+      {contrasenaActualizada && (
+        <PasswordUpdatedBanner />
+      )}
+
       {/* Notificación de correo verificado */}
-      {mostrarVerificado && (
+      {mostrarVerificado && !contrasenaActualizada && (
         <VerificationBanner nombre={nombreUsuario} />
       )}
 
       {/* Banner de bienvenida */}
-      {mostrarBienvenida && !mostrarVerificado && (
+      {mostrarBienvenida && !mostrarVerificado && !contrasenaActualizada && (
         <WelcomeBanner
           nombre={nombreUsuario}
           inicial={(nombreUsuario || user?.email || 'U').charAt(0).toUpperCase()}

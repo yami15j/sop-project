@@ -4,17 +4,25 @@ import { createClient } from '@/utils/supabase/server'
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
+  const next = searchParams.get('next')
+
+  // Detectar si el flujo es para restablecer contraseña
+  const isResetPassword = next === '/reset-password' || next?.includes('reset-password')
 
   // Obtener el User-Agent para distinguir entre móvil y computadora (web)
   const userAgent = request.headers.get('user-agent') || ''
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
 
   // Destino exitoso:
-  // - En móvil: se queda en la pantalla de éxito estático para invitarlo a volver a la computadora.
-  // - En computadora: se le redirige directamente al Dashboard con flags de bienvenida.
-  const successRedirect = isMobile 
-    ? `${origin}/signup/verified-static` 
-    : `${origin}/dashboard?bienvenido=1&nuevo=1&verificado=1`
+  // - Si es restablecimiento de contraseña: ir a /reset-password
+  // - Si es registro regular:
+  //   - En móvil: se queda en la pantalla de éxito estático.
+  //   - En computadora: va directamente al Dashboard.
+  const successRedirect = isResetPassword
+    ? `${origin}/reset-password`
+    : isMobile 
+      ? `${origin}/signup/verified-static` 
+      : `${origin}/dashboard?bienvenido=1&nuevo=1&verificado=1`
 
   if (code) {
     const supabase = await createClient()
@@ -24,7 +32,12 @@ export async function GET(request: Request) {
     }
   }
 
-  // Si el código no está presente o el token ya fue consumido (ej. por el polling automático):
+  // Si el código falló y es un restablecimiento de contraseña, redirigimos a login con error explicativo
+  if (isResetPassword) {
+    return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent('El enlace de restablecimiento ha expirado o ya fue utilizado. Por favor, solicita uno nuevo.')}`)
+  }
+
+  // Si el código no está presente o el token ya fue consumido (ej. por el polling automático de registro):
   if (!isMobile) {
     const supabase = await createClient()
     const { data: { session } } = await supabase.auth.getSession()
@@ -40,4 +53,5 @@ export async function GET(request: Request) {
   // En móvil, si falló o el token ya fue consumido, lo dejamos en la pantalla estática de confirmación para evitar confusión.
   return NextResponse.redirect(`${origin}/signup/verified-static`)
 }
+
 

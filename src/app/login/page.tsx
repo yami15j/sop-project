@@ -74,12 +74,20 @@ export default async function LoginPage({
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="mb-1 sm:mb-1.5 block text-[11px] sm:text-xs font-bold uppercase tracking-wide text-slate-500"
-            >
-              Contraseña
-            </label>
+            <div className="flex items-center justify-between mb-1 sm:mb-1.5">
+              <label
+                htmlFor="password"
+                className="block text-[11px] sm:text-xs font-bold uppercase tracking-wide text-slate-500"
+              >
+                Contraseña
+              </label>
+              <Link
+                href="/forgot-password"
+                className="text-[10px] sm:text-xs font-bold text-[#00A8E8] hover:underline"
+              >
+                ¿La olvidaste?
+              </Link>
+            </div>
             <input
               id="password"
               name="password"
