@@ -59,6 +59,7 @@ export async function solicitarMentoria(formData: FormData) {
       telefono: telefono || null,
       beca_objetivo: beca || null,
       deadline: deadline || null,
+      pais_destino: pais || null,
     })
 
   if (error) {
