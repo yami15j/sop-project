@@ -35,7 +35,7 @@ export async function signup(formData: FormData) {
     email,
     password,
     options: {
-      emailRedirectTo: `${origin}/api/auth/callback?next=${encodeURIComponent('/signup/verified')}`,
+      emailRedirectTo: `${origin}/api/auth/callback?next=${encodeURIComponent('/signup/verified-static')}`,
       data: {
         full_name: `${nombre} ${apellido}`.trim(),
         nombre,
