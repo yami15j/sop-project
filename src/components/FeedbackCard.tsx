@@ -33,7 +33,7 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
     if (!text) return <p className="text-slate-400 italic">No se generaron anotaciones para este ensayo.</p>
 
     const cleanText = text.replace('ENSAYO ANOTADO:', '').trim()
-    
+
     // Normalizar análisis antiguos (> "texto" \n > 💬 SUGERENCIA: texto) al formato <texto>...<sugerencia>...
     const normalizedText = cleanText.replace(
       />\s*["“”']?([\s\S]*?)["“”']?\s*\n\s*>\s*(?:💬\s*)?SUGERENCIA:\s*([\s\S]*?)(?=(?:\n\n)|(?:>\s*["“”'])|$)/gi,
@@ -48,7 +48,7 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
         {paragraphs.map((paragraph, pIndex) => {
           // Separar cada párrafo buscando la etiqueta XML o el formato antiguo [SUGERENCIA:...]
           const parts = paragraph.split(/(<texto>[\s\S]*?<\/texto>\s*<sugerencia>[\s\S]*?<\/sugerencia>|(?:\{[\s\S]*?\})?\s*\[SUGERENCIA:[\s\S]*?\])/gi)
-          
+
           return (
             <div key={pIndex} className="leading-relaxed sm:leading-[1.9] text-[13px] sm:text-[15px] text-slate-700 text-justify">
               {parts.map((part, index) => {
@@ -59,7 +59,7 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
                 if (xmlMatch || matchWithBraces || matchWithoutBraces) {
                   const originalText = xmlMatch ? xmlMatch[1] : (matchWithBraces ? matchWithBraces[1] : null)
                   const suggestion = xmlMatch ? xmlMatch[2] : (matchWithBraces ? matchWithBraces[2] : (matchWithoutBraces?.[1] || ''))
-                  
+
                   return (
                     <span key={index} className="inline">
                       {originalText && (
@@ -71,7 +71,7 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
                       {/* Bloque de sugerencia Ultra-Compacto y Delicado */}
                       <span className="block my-2 relative group isolate animate-in fade-in zoom-in-95 duration-300">
                         <span className="block relative overflow-hidden rounded-2xl bg-slate-50/50 border border-slate-100 shadow-sm transition-all hover:shadow hover:border-indigo-100/60">
-                          
+
                           {/* Borde izquierdo muy fino */}
                           <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-indigo-300/80"></span>
 
@@ -81,14 +81,14 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
                                 <Lightbulb className="w-3 h-3 text-indigo-500" />
                               </span>
                             </span>
-                            
+
                             <span className="flex-1">
                               <span className="flex items-center gap-1.5 mb-0.5">
                                 <strong className="text-[9px] font-bold uppercase tracking-wider text-indigo-400">
                                   Sugerencia
                                 </strong>
                               </span>
-                              
+
                               <span className="block text-[11px] sm:text-[12px] leading-relaxed text-slate-600">
                                 {suggestion.replace(/\]$/, '')}
                               </span>

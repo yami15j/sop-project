@@ -7,7 +7,20 @@ import { createClient } from '@/utils/supabase/server'
 
 export async function signup(formData: FormData) {
   const supabase = await createClient()
-  const origin = (await headers()).get('origin') || 'http://localhost:3000'
+  
+  // Obtener el origen de forma súper robusta para evitar errores como la cadena "null"
+  const headersList = await headers()
+  let origin = headersList.get('origin')
+  
+  if (!origin || origin === 'null') {
+    const host = headersList.get('host')
+    if (host) {
+      const isHttps = headersList.get('x-forwarded-proto') === 'https'
+      origin = `${isHttps ? 'https' : 'http'}://${host}`
+    } else {
+      origin = 'http://localhost:3000'
+    }
+  }
 
   const nombre = (formData.get('nombre') as string || '').trim()
   const apellido = (formData.get('apellido') as string || '').trim()
@@ -22,7 +35,7 @@ export async function signup(formData: FormData) {
     email,
     password,
     options: {
-      emailRedirectTo: `${origin}/api/auth/callback?next=/dashboard`,
+      emailRedirectTo: `${origin}/api/auth/callback?next=${encodeURIComponent('/signup/verified')}`,
       data: {
         full_name: `${nombre} ${apellido}`.trim(),
         nombre,

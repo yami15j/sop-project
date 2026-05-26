@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, Sparkles, PartyPopper } from 'lucide-react'
+import { X } from 'lucide-react'
 
 interface WelcomeBannerProps {
   nombre: string | null
@@ -10,102 +10,90 @@ interface WelcomeBannerProps {
 }
 
 export default function WelcomeBanner({ nombre, inicial, esCuentaNueva = false }: WelcomeBannerProps) {
-  const [visible, setVisible] = useState(false)
-  const [closing, setClosing] = useState(false)
-
-  useEffect(() => {
-    const t = setTimeout(() => setVisible(true), 100)
-    return () => clearTimeout(t)
-  }, [])
+  const [active, setActive] = useState(false)
+  const [visible, setVisible] = useState(true)
 
   const handleClose = () => {
-    setClosing(true)
-    setTimeout(() => setVisible(false), 400)
+    setActive(false)
+    setTimeout(() => {
+      setVisible(false)
+    }, 300)
   }
 
-  if (!visible && closing) return null
+  useEffect(() => {
+    // Activar animación de entrada después de montar
+    const showTimer = setTimeout(() => setActive(true), 50)
+    
+    // Auto-desvanecer después de 5.5 segundos (mismo tiempo que dura la barra de progreso)
+    const dismissTimer = setTimeout(() => {
+      handleClose()
+    }, 5500)
+
+    return () => {
+      clearTimeout(showTimer)
+      clearTimeout(dismissTimer)
+    }
+  }, [])
+
   if (!visible) return null
 
-  // ── Mensajes según si es cuenta nueva o regreso ──
-  const etiqueta = esCuentaNueva ? '¡Cuenta creada!' : 'Sesión iniciada'
-  const titulo = esCuentaNueva
-    ? `¡Bienvenido/a a SOP Reviewer${nombre ? `, ${nombre}` : ''}! 🎓`
-    : `¡Hola de nuevo${nombre ? `, ${nombre}` : ''}! 👋`
-  const subtitulo = esCuentaNueva
-    ? 'Tu cuenta está lista. Sube tu primer ensayo y recibe feedback de IA al instante.'
-    : 'Ya puedes continuar desde donde lo dejaste. ¡Mucho ánimo!'
-
-  const iconColor = esCuentaNueva ? '#a78bfa' : '#00A8E8'
-  const glowColor1 = esCuentaNueva ? '#7c3aed' : '#00A8E8'
-  const glowColor2 = esCuentaNueva ? '#ec4899' : '#6366f1'
+  // Mensaje de una sola línea súper directa
+  const mensaje = esCuentaNueva
+    ? '¡Bienvenido/a a SOP Reviewer!'
+    : '¡Hola de nuevo!'
 
   return (
     <div
-      className={`relative overflow-hidden transition-all duration-500 ${
-        closing ? 'opacity-0 -translate-y-4 max-h-0' : 'opacity-100 translate-y-0 max-h-96'
+      className={`fixed top-24 right-4 sm:right-6 z-50 max-w-sm transition-all duration-300 ease-out ${
+        active 
+          ? 'opacity-100 translate-y-0 scale-100' 
+          : 'opacity-0 -translate-y-4 scale-95 pointer-events-none'
       }`}
     >
-      <div className="relative border-b py-3.5 px-4 sm:py-5 sm:px-6" style={{ background: 'linear-gradient(135deg, #010B2B 0%, #0d1f4a 100%)', borderColor: 'rgba(255,255,255,0.08)' }}>
+      <div 
+        className="relative overflow-hidden rounded-full py-2.5 px-4 pr-10 flex items-center justify-between backdrop-blur-sm shadow-[0_8px_25px_rgba(0,0,0,0.06)] border"
+        style={{ 
+          background: 'rgba(255, 255, 255, 0.96)',
+          borderColor: 'rgba(226, 232, 240, 0.9)',
+        }}
+      >
+        <span className="text-slate-800 font-extrabold text-xs sm:text-sm leading-none select-none">
+          {mensaje}
+        </span>
 
-        {/* Glows decorativos */}
-        <div className="absolute top-0 left-1/4 w-64 h-full blur-[80px] opacity-20 pointer-events-none" style={{ background: glowColor1 }} />
-        <div className="absolute top-0 right-1/4 w-48 h-full blur-[80px] opacity-15 pointer-events-none" style={{ background: glowColor2 }} />
+        {/* Botón de cerrar circular y ultra sutil */}
+        <button
+          onClick={handleClose}
+          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 rounded-full hover:bg-slate-100 transition-colors"
+          aria-label="Cerrar notificación"
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
 
-        {/* Partículas animadas */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {['top-2 left-[5%]', 'top-3 left-[20%]', 'top-1 right-[18%]', 'top-4 right-[6%]', 'bottom-2 left-[40%]'].map((pos, i) => (
-            <div
-              key={i}
-              className={`absolute ${pos} text-sm animate-spin select-none`}
-              style={{ animationDuration: `${5 + i * 2}s`, color: `${iconColor}60` }}
-            >
-              ✦
-            </div>
-          ))}
-        </div>
-
-        {/* Contenido */}
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-6 relative z-10">
-          <div className="flex items-center gap-3 sm:gap-4">
-
-            {/* Ícono / avatar */}
-            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg"
-              style={{ background: esCuentaNueva ? 'linear-gradient(135deg, #7c3aed, #a855f7)' : 'linear-gradient(135deg, #00A8E8, #0060b0)' }}>
-              {esCuentaNueva
-                ? <PartyPopper className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                : <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-              }
-            </div>
-
-            <div>
-              {/* Etiqueta chip */}
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: iconColor }} />
-                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest" style={{ color: iconColor }}>
-                  {etiqueta}
-                </span>
-              </div>
-              {/* Título principal */}
-              <h2 className="text-white font-extrabold text-sm sm:text-lg md:text-xl leading-tight">
-                {titulo}
-              </h2>
-              {/* Subtítulo */}
-              <p className="text-slate-400 text-sm font-medium mt-0.5 hidden md:block">
-                {subtitulo}
-              </p>
-            </div>
-          </div>
-
-          {/* Botón cerrar */}
-          <button
-            onClick={handleClose}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-white hover:bg-white/10 transition-all flex-shrink-0"
-            aria-label="Cerrar"
-          >
-            <X className="w-4 h-4" />
-          </button>
+        {/* Barra de progreso de auto-dismiss delgada */}
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-slate-100 overflow-hidden">
+          <div 
+            className="h-full animate-shrink-width"
+            style={{
+              background: 'linear-gradient(to right, #00A8E8, #0070b8)',
+              animation: 'shrinkWidth 5.5s linear forwards'
+            }}
+          />
         </div>
       </div>
+
+      {/* Estilo global simplificado para la barra de progreso */}
+      <style jsx global>{`
+        @keyframes shrinkWidth {
+          from { width: 100%; }
+          to { width: 0%; }
+        }
+        .animate-shrink-width {
+          animation-fill-mode: forwards;
+        }
+      `}</style>
     </div>
   )
 }
+
+

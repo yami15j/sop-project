@@ -28,6 +28,62 @@ function checkRateLimit(ip: string): boolean {
   return true
 }
 
+// --- VALIDACIÓN LOCAL DE ENSAYOS EN PROSA ---
+function validateTextAsEssay(text: string): { isValid: boolean; reason?: string } {
+  const trimmed = text.trim()
+  const len = trimmed.length
+
+  if (len < 50) {
+    return { isValid: false, reason: 'El ensayo es muy corto. Escribe al menos 50 caracteres.' }
+  }
+
+  // 1. Detección de JSON o XML/HTML
+  if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+    return { isValid: false, reason: 'Formato JSON no permitido. Pega tu ensayo en prosa.' }
+  }
+  if (trimmed.startsWith('<') && trimmed.endsWith('>')) {
+    return { isValid: false, reason: 'Código HTML/XML no permitido. Ingresa tu ensayo en texto plano.' }
+  }
+
+  // 2. Detección de código de programación común
+  const codeKeywords = [
+    /\bconst\s+\w+\s*=/, /\blet\s+\w+\s*=/, /\bvar\s+\w+\s*=/,
+    /\bfunction\s+\w+\s*\(/, /\bimport\s+.*\s+from\s+['"]/,
+    /\bexport\s+(const|default|class|function)\b/,
+    /\bpublic\s+class\s+\w+/, /\bpublic\s+static\s+void\s+main\b/,
+    /\bdef\s+\w+\s*\(.*\)\s*:/, /\bif\s+__name__\s*==\s*['"]__main__['"]/,
+    /console\.log\(/, /printf\(/, /println\(/
+  ]
+  
+  let keywordMatches = 0
+  for (const regex of codeKeywords) {
+    if (regex.test(text)) keywordMatches++
+  }
+
+  if (keywordMatches >= 2 || (keywordMatches >= 1 && text.includes('{') && text.includes('}'))) {
+    return { isValid: false, reason: 'Código de programación detectado. Por favor, ingresa tu ensayo escrito en prosa.' }
+  }
+
+  // 3. Detección de documentos estructurados de datos, formularios o cronogramas (exceso de dos puntos ":" o guiones "-")
+  const colonCount = (text.match(/:/g) || []).length
+  
+  // En un ensayo normal de 500 palabras (aprox 3000 caracteres), puede haber a lo mucho 2 o 3 dos puntos.
+  // Si la densidad de ":" es muy alta (por ejemplo, más de 1 por cada 150 caracteres), es un formulario, cronograma o presupuesto.
+  const colonDensity = colonCount / len
+  if (colonDensity > 0.006 && len > 200) {
+    return { isValid: false, reason: 'El texto parece ser un cronograma, lista o formulario. Ingresa un ensayo redactado en prosa.' }
+  }
+
+  // 4. Exceso de números (presupuestos, balances financieros)
+  const digitCount = (text.match(/\d/g) || []).length
+  const digitRatio = digitCount / len
+  if (digitRatio > 0.12 && len > 100) {
+    return { isValid: false, reason: 'Se detectaron demasiadas cifras/números. Ingresa tu ensayo de postulación redactado en prosa.' }
+  }
+
+  return { isValid: true }
+}
+
 
 export async function POST(req: Request) {
   // 1. Verificación de Rate Limit
@@ -73,6 +129,12 @@ export async function POST(req: Request) {
 
     if (!ensayo || ensayo.trim().length < 50) {
       return NextResponse.json({ error: 'El ensayo es muy corto.' }, { status: 400 })
+    }
+
+    // Validación local del contenido del ensayo (Gratuita y en 0ms)
+    const localValidation = validateTextAsEssay(ensayo)
+    if (!localValidation.isValid) {
+      return NextResponse.json({ error: localValidation.reason }, { status: 400 })
     }
     if (ensayo.length > 15000) {
       return NextResponse.json({ error: 'El ensayo es demasiado largo.' }, { status: 400 })
@@ -120,6 +182,15 @@ export async function POST(req: Request) {
     } catch (apiError: any) {
       console.error("Error crítico en la API de Anthropic:", apiError)
       throw new Error(`Error de comunicación con la IA: ${apiError.message}`)
+    }
+
+    // Validación de tipo de documento
+    if (claudeResponse.includes('[ERROR: NO_ES_UN_ENSAYO]')) {
+      console.warn(`[VALIDACIÓN] Intento de análisis fallido de documento no válido por el usuario: ${user.email}`)
+      return NextResponse.json(
+        { error: '¡Lo sentimos! Nuestro análisis preliminar de inteligencia artificial determinó que este texto no califica como un ensayo de postulación, declaración de propósito (SOP) o carta de motivación. Por favor, asegúrate de subir o pegar únicamente el documento con el que postulas a tu beca.' },
+        { status: 400 }
+      )
     }
 
     // Extraer el puntaje dinámicamente de la respuesta de Claude usando Regex

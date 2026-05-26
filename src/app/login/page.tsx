@@ -20,7 +20,7 @@ export default async function LoginPage({
         <div className="absolute -bottom-40 -left-20 w-[500px] h-[500px] bg-purple-600 rounded-full blur-[120px]"></div>
       </div>
 
-      <div className="w-full max-w-[400px] rounded-3xl sm:rounded-[32px] border border-white/10 bg-white px-5 py-6 sm:px-8 sm:py-10 shadow-[0_0_50px_rgba(0,168,232,0.15)] relative z-10">
+      <div className="w-full max-w-[440px] rounded-3xl sm:rounded-[32px] border border-white/10 bg-white px-5 py-6 sm:px-8 sm:py-10 shadow-[0_0_50px_rgba(0,168,232,0.15)] relative z-10">
 
         {/* Botón de regreso dentro de la tarjeta */}
         <div className="mb-6 flex justify-start">

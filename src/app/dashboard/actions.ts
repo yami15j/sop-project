@@ -28,6 +28,16 @@ export async function solicitarMentoria(formData: FormData) {
     return { success: false, error: 'No autorizado' }
   }
 
+  // Obtener el último ensayo del usuario para incluirlo en el correo de mentoría
+  const { data: ensayos } = await supabase
+    .from('ensayos_enviados')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+
+  const ultimoEnsayo = ensayos && ensayos.length > 0 ? ensayos[0] : null
+
   // 2. Extraemos los datos del formulario
   const nombre = formData.get('nombre') as string
   const emailVisible = formData.get('email_visible') as string  // email que el estudiante escribe
@@ -114,6 +124,40 @@ export async function solicitarMentoria(formData: FormData) {
                   <td style="padding: 12px 16px; color: #1e293b;">${deadline || '—'}</td>
                 </tr>
               </table>
+
+              <!-- Ensayo del estudiante -->
+              ${ultimoEnsayo ? `
+                <div style="margin-top: 28px; padding: 24px; background: #f8fafc; border-radius: 12px; border: 1.5px dashed #cbd5e1; text-align: left;">
+                  <h3 style="color: #010B2B; margin-top: 0; margin-bottom: 12px; font-size: 16px; font-weight: bold;">
+                    📄 Ensayo Adjunto para Mentoría
+                  </h3>
+                  
+                  ${ultimoEnsayo.pdf_url ? `
+                    <div style="margin-bottom: 18px; background: #e0f2fe; border: 1px solid #bae6fd; padding: 14px; border-radius: 8px; text-align: center;">
+                      <p style="color: #0369a1; font-size: 13px; font-weight: bold; margin: 0 0 10px 0;">
+                        El estudiante subió este ensayo en formato PDF original.
+                      </p>
+                      <a href="${ultimoEnsayo.pdf_url}" target="_blank" rel="noopener noreferrer"
+                         style="display: inline-block; background: #0284c7; color: white; text-decoration: none; padding: 8px 18px; border-radius: 6px; font-weight: bold; font-size: 13px;">
+                        📥 Descargar PDF Original
+                      </a>
+                    </div>
+                  ` : ''}
+
+                  <p style="color: #475569; font-size: 11px; font-weight: bold; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">
+                    Contenido del Ensayo (${ultimoEnsayo.contenido?.trim().split(/\s+/).length || 0} palabras):
+                  </p>
+                  <div style="background: white; padding: 18px; border-radius: 8px; border: 1px solid #e2e8f0; font-family: 'Times New Roman', Times, serif; font-size: 14px; line-height: 1.6; color: #1e293b; white-space: pre-wrap; max-height: 350px; overflow-y: auto;">
+                    ${ultimoEnsayo.contenido || 'Sin contenido textual.'}
+                  </div>
+                </div>
+              ` : `
+                <div style="margin-top: 28px; padding: 16px; background: #fffbeb; border-radius: 12px; border: 1px solid #fef3c7; text-align: center;">
+                  <p style="color: #b45309; font-size: 13px; font-weight: bold; margin: 0;">
+                    Nota: No se encontró ningún ensayo previo en el historial de este estudiante.
+                  </p>
+                </div>
+              `}
 
               <!-- CTA -->
               <div style="margin-top: 28px; text-align: center;">

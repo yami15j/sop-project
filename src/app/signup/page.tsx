@@ -1,15 +1,18 @@
+'use client'
+
+import { use } from 'react'
 import { signup } from './actions'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft, Sparkles } from 'lucide-react'
 import ErrorBanner from '@/components/ErrorBanner'
 
-export default async function SignupPage({
+export default function SignupPage({
   searchParams,
 }: {
   searchParams: Promise<{ error?: string, msg?: string }>
 }) {
-  const params = await searchParams;
+  const params = use(searchParams);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#010B2B] font-sans selection:bg-[#00A8E8]/20 selection:text-white px-4 py-4 sm:px-3.5 sm:py-6 md:p-8 relative overflow-hidden">
@@ -20,7 +23,7 @@ export default async function SignupPage({
         <div className="absolute -bottom-40 -left-20 w-[500px] h-[500px] bg-purple-600 rounded-full blur-[120px]"></div>
       </div>
 
-      <div className="w-full max-w-[400px] rounded-3xl sm:rounded-[32px] border border-white/10 bg-white px-5 py-6 sm:px-8 sm:py-10 shadow-[0_0_50px_rgba(0,168,232,0.15)] relative z-10">
+      <div className="w-full max-w-[440px] rounded-3xl sm:rounded-[32px] border border-white/10 bg-white px-5 py-6 sm:px-8 sm:py-10 shadow-[0_0_50px_rgba(0,168,232,0.15)] relative z-10">
 
         {/* Botón de regreso dentro de la tarjeta */}
         <div className="mb-6 flex justify-start">
@@ -55,7 +58,19 @@ export default async function SignupPage({
           </p>
         </div>
 
-        <form className="flex flex-col gap-3.5 sm:gap-4" noValidate>
+        <form 
+          action={signup}
+          onSubmit={(e) => {
+            const emailInput = document.getElementById('email') as HTMLInputElement
+            const passwordInput = document.getElementById('password') as HTMLInputElement
+            if (emailInput?.value && passwordInput?.value) {
+              sessionStorage.setItem('signup_email', emailInput.value)
+              sessionStorage.setItem('signup_password', passwordInput.value)
+            }
+          }}
+          className="flex flex-col gap-3.5 sm:gap-4" 
+          noValidate
+        >
           {/* Nombre y Apellido en grid */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             <div>
@@ -105,6 +120,9 @@ export default async function SignupPage({
               type="email"
               placeholder="tu@correo.com"
               required
+              onChange={(e) => {
+                sessionStorage.setItem('signup_email', e.target.value)
+              }}
               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 sm:px-4 sm:py-3.5 text-sm sm:text-base text-slate-900 placeholder-slate-400 outline-none transition-all focus:bg-white focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]"
             />
           </div>
@@ -122,6 +140,9 @@ export default async function SignupPage({
               type="password"
               placeholder="••••••••"
               required
+              onChange={(e) => {
+                sessionStorage.setItem('signup_password', e.target.value)
+              }}
               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 sm:px-4 sm:py-3.5 text-sm sm:text-base text-slate-900 placeholder-slate-400 outline-none transition-all focus:bg-white focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]"
             />
           </div>
@@ -132,7 +153,15 @@ export default async function SignupPage({
 
           <div className="mt-2.5 sm:mt-4 flex flex-col gap-3.5 sm:gap-4">
             <button
-              formAction={signup}
+              type="submit"
+              onClick={() => {
+                const emailInput = document.getElementById('email') as HTMLInputElement
+                const passwordInput = document.getElementById('password') as HTMLInputElement
+                if (emailInput?.value && passwordInput?.value) {
+                  sessionStorage.setItem('signup_email', emailInput.value)
+                  sessionStorage.setItem('signup_password', passwordInput.value)
+                }
+              }}
               className="w-full rounded-xl bg-[#00A8E8] hover:bg-[#0090C7] px-4 py-3 sm:py-3.5 font-bold text-white transition-all shadow-lg shadow-[#00A8E8]/20 hover:-translate-y-0.5 text-sm sm:text-lg"
             >
               Crear mi cuenta gratis

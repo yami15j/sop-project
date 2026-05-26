@@ -6,10 +6,12 @@ import FeedbackCard from '@/components/FeedbackCard'
 import MentoriaForm from '@/components/MentoriaForm'
 import DashboardSidebar from '@/components/DashboardSidebar'
 import WelcomeBanner from '@/components/WelcomeBanner'
+import VerificationBanner from '@/components/VerificationBanner'
+import CollapsibleStats from '@/components/CollapsibleStats'
 import { LogOut, Sparkles, FileText, Trophy, Zap, Users, Download } from 'lucide-react'
 import { solicitarMentoria, logout, switchAccount } from './actions'
 
-export default async function DashboardPage(props: { searchParams: Promise<{ ensayo?: string; bienvenido?: string; nuevo?: string; vista?: string }> }) {
+export default async function DashboardPage(props: { searchParams: Promise<{ ensayo?: string; bienvenido?: string; nuevo?: string; vista?: string; verificado?: string }> }) {
   const searchParams = await props.searchParams
 
   const supabase = await createClient()
@@ -29,11 +31,14 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
     console.error('[Dashboard] Error cargando ensayos:', ensayosError)
   }
 
-  const { data: lead, error: leadError } = await supabase
+  const { data: leads, error: leadError } = await supabase
     .from('leads_mentoria')
     .select('*')
     .eq('user_id', user.id)
-    .maybeSingle()
+    .order('created_at', { ascending: false })
+    .limit(1)
+
+  const lead = leads && leads.length > 0 ? leads[0] : null
 
   if (leadError) {
     console.error('[Dashboard] Error cargando lead:', leadError)
@@ -45,6 +50,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
   const selectedEnsayo = selectedEnsayoId ? ensayos?.find(e => e.id === selectedEnsayoId) : null
   const vistaTexto = searchParams?.vista === 'texto'
   const mostrarBienvenida = searchParams?.bienvenido === '1'
+  const mostrarVerificado = searchParams?.verificado === '1'
   const esCuentaNueva = searchParams?.nuevo === '1'
   const nombreUsuario = user?.user_metadata?.nombre || user?.user_metadata?.full_name?.split(' ')[0] || null
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || 'Mi cuenta'
@@ -55,10 +61,15 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
   const puntajePromedio = puntajes.length > 0 ? Math.round(puntajes.reduce((a: number, b: number) => a + b, 0) / puntajes.length) : null
 
   return (
-    <div className="min-h-screen font-sans" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e8f4fd 100%)' }}>
+    <div className="min-h-screen font-sans" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%)' }}>
+
+      {/* Notificación de correo verificado */}
+      {mostrarVerificado && (
+        <VerificationBanner nombre={nombreUsuario} />
+      )}
 
       {/* Banner de bienvenida */}
-      {mostrarBienvenida && (
+      {mostrarBienvenida && !mostrarVerificado && (
         <WelcomeBanner
           nombre={nombreUsuario}
           inicial={(nombreUsuario || user?.email || 'U').charAt(0).toUpperCase()}
@@ -67,13 +78,25 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
       )}
 
       {/* ── HEADER ── */}
-      <header className="sticky top-0 z-40" style={{ background: 'linear-gradient(135deg, #010B2B 0%, #0d1f4a 100%)', borderBottom: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 4px 32px rgba(1,11,43,0.4)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-[72px] flex justify-between items-center gap-4">
+      <header className="sticky top-0 z-40" style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', borderBottom: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 4px 32px rgba(0,0,0,0.15)' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-[86px] flex justify-between items-center gap-4 pt-2.5">
 
           {/* Logo + Título */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #00A8E8, #0070b8)' }}>
-              <Sparkles className="w-5 h-5 text-white" />
+            <CollapsibleStats
+              ensayosUsados={ensayosUsados}
+              ensayosRestantes={ensayosRestantes}
+              puntajePromedio={puntajePromedio}
+              ensayos={ensayos ?? null}
+              lead={lead}
+            />
+
+            <div className="w-11 h-11 flex items-center justify-center overflow-hidden rounded-full border border-white/20 shadow-sm bg-black flex-shrink-0">
+              <img
+                src="/logo.jpg"
+                alt="Logo Comunidad del Intercambio"
+                className="object-cover w-full h-full"
+              />
             </div>
             <div>
               <div className="text-white font-extrabold text-base leading-none tracking-tight">SOP Reviewer</div>
@@ -83,7 +106,6 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
 
           {/* Centro: créditos */}
           <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: 'rgba(0,168,232,0.12)', border: '1px solid rgba(0,168,232,0.25)' }}>
-            <Zap className="w-4 h-4 text-[#00A8E8]" />
             <span className="text-slate-300 text-sm font-medium">Créditos:</span>
             <span className="text-[#00A8E8] text-sm font-extrabold">{ensayosRestantes} / 2</span>
           </div>
@@ -123,129 +145,10 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
         </div>
       </header>
 
-      {/* ── STAT CARDS (fila superior) ── */}
-      <div className="max-w-7xl mx-auto px-4 pt-5 pb-2">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
 
-          {/* Card 1: Ensayos enviados */}
-          {ensayosUsados > 0 && ensayos?.[0] ? (
-            <Link href={`/dashboard?ensayo=${ensayos[0].id}&vista=texto`}
-              className="group relative overflow-hidden rounded-2xl p-3.5 sm:p-4 flex items-center gap-2.5 sm:gap-3 transition-all duration-300 hover:-translate-y-0.5"
-              style={{ background: 'linear-gradient(145deg,#ffffff,#f5f7ff)', border: '1px solid rgba(99,102,241,0.15)', boxShadow: '0 2px 16px rgba(99,102,241,0.08)', cursor: 'pointer' }}>
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" style={{ background: 'linear-gradient(145deg,rgba(99,102,241,0.04),rgba(59,130,246,0.05))' }} />
-              <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: 'linear-gradient(to right,#6366f1,#3b82f6)' }} />
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 relative z-10"
-                style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)', boxShadow: '0 4px 12px rgba(99,102,241,0.35)' }}>
-                <FileText className="w-4 h-4 text-white" />
-              </div>
-              <div className="flex-1 min-w-0 relative z-10">
-                <div className="text-2xl font-black leading-none tracking-tight" style={{ color: '#1e1b4b' }}>{ensayosUsados}</div>
-                <div className="text-[11px] font-semibold leading-tight mt-0.5 uppercase tracking-wide" style={{ color: '#6b7280' }}>Ensayos</div>
-                <div className="text-[10px] font-bold mt-1 opacity-0 group-hover:opacity-100 transition-all duration-300" style={{ color: '#6366f1' }}>Ver ensayo →</div>
-              </div>
-            </Link>
-          ) : (
-            <div className="relative overflow-hidden rounded-2xl p-3.5 sm:p-4 flex items-center gap-2.5 sm:gap-3"
-              style={{ background: 'linear-gradient(145deg,#ffffff,#f5f7ff)', border: '1px solid rgba(99,102,241,0.12)', boxShadow: '0 2px 12px rgba(99,102,241,0.05)' }}>
-              <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: 'linear-gradient(to right,#6366f1,#3b82f6)' }} />
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 relative z-10"
-                style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)', boxShadow: '0 4px 12px rgba(99,102,241,0.3)' }}>
-                <FileText className="w-4 h-4 text-white" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-2xl font-black leading-none tracking-tight" style={{ color: '#1e1b4b' }}>{ensayosUsados}</div>
-                <div className="text-[11px] font-semibold leading-tight mt-0.5 uppercase tracking-wide" style={{ color: '#6b7280' }}>Ensayos</div>
-              </div>
-            </div>
-          )}
-
-          {/* Card 2: Créditos restantes */}
-          {ensayosRestantes === 0 ? (
-            <Link href="/dashboard#mentoria"
-              className="group relative overflow-hidden rounded-2xl p-3.5 sm:p-4 flex items-center gap-2.5 sm:gap-3 transition-all duration-300 hover:-translate-y-0.5"
-              style={{ background: 'linear-gradient(145deg,#fff8f0,#fff3e8)', border: '1px solid rgba(249,115,22,0.2)', boxShadow: '0 2px 16px rgba(249,115,22,0.08)', cursor: 'pointer' }}>
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" style={{ background: 'linear-gradient(145deg,rgba(249,115,22,0.04),rgba(245,158,11,0.06))' }} />
-              <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: 'linear-gradient(to right,#f97316,#f59e0b)' }} />
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 relative z-10"
-                style={{ background: 'linear-gradient(135deg,#f97316,#ea580c)', boxShadow: '0 4px 12px rgba(249,115,22,0.4)' }}>
-                <Zap className="w-4 h-4 text-white" />
-              </div>
-              <div className="flex-1 min-w-0 relative z-10">
-                <div className="text-2xl font-black leading-none tracking-tight" style={{ color: '#c2410c' }}>0</div>
-                <div className="text-[11px] font-semibold leading-tight mt-0.5 uppercase tracking-wide" style={{ color: '#92400e' }}>Créditos</div>
-                <div className="text-[10px] font-bold mt-1 opacity-0 group-hover:opacity-100 transition-all duration-300" style={{ color: '#f97316' }}>{lead ? 'Ver solicitud →' : 'Solicitar →'}</div>
-              </div>
-            </Link>
-          ) : (
-            <div className="relative overflow-hidden rounded-2xl p-3.5 sm:p-4 flex items-center gap-2.5 sm:gap-3"
-              style={{ background: 'linear-gradient(145deg,#f0f9ff,#e8f4fd)', border: '1px solid rgba(0,168,232,0.2)', boxShadow: '0 2px 16px rgba(0,168,232,0.07)' }}>
-              <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: 'linear-gradient(to right,#00A8E8,#0070b8)' }} />
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg,#00A8E8,#0078c8)', boxShadow: '0 4px 12px rgba(0,168,232,0.4)' }}>
-                <Zap className="w-4 h-4 text-white" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-2xl font-black leading-none tracking-tight" style={{ color: '#0369a1' }}>{ensayosRestantes}</div>
-                <div className="text-[11px] font-semibold leading-tight mt-0.5 uppercase tracking-wide" style={{ color: '#0284c7' }}>Créditos</div>
-              </div>
-            </div>
-          )}
-
-          {/* Card 3: Puntaje promedio */}
-          {puntajePromedio !== null && ensayos?.[0] ? (
-            <Link href={`/dashboard?ensayo=${ensayos[0].id}`}
-              className="group relative overflow-hidden rounded-2xl p-3.5 sm:p-4 flex items-center gap-2.5 sm:gap-3 transition-all duration-300 hover:-translate-y-0.5"
-              style={{ background: 'linear-gradient(145deg,#f0fdf7,#ecfdf5)', border: '1px solid rgba(16,185,129,0.18)', boxShadow: '0 2px 16px rgba(16,185,129,0.08)', cursor: 'pointer' }}>
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" style={{ background: 'linear-gradient(145deg,rgba(16,185,129,0.05),rgba(5,150,105,0.07))' }} />
-              <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: 'linear-gradient(to right,#10b981,#059669)' }} />
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 relative z-10"
-                style={{ background: 'linear-gradient(135deg,#10b981,#059669)', boxShadow: '0 4px 12px rgba(16,185,129,0.4)' }}>
-                <Trophy className="w-4 h-4 text-white" />
-              </div>
-              <div className="flex-1 min-w-0 relative z-10">
-                <div className="text-2xl font-black leading-none tracking-tight" style={{ color: '#065f46' }}>{puntajePromedio}</div>
-                <div className="text-[11px] font-semibold leading-tight mt-0.5 uppercase tracking-wide" style={{ color: '#047857' }}>Puntaje</div>
-                <div className="text-[10px] font-bold mt-1 opacity-0 group-hover:opacity-100 transition-all duration-300" style={{ color: '#10b981' }}>Ver feedback →</div>
-              </div>
-            </Link>
-          ) : (
-            <div className="relative overflow-hidden rounded-2xl p-3.5 sm:p-4 flex items-center gap-2.5 sm:gap-3"
-              style={{ background: 'linear-gradient(145deg,#f0fdf7,#ecfdf5)', border: '1px solid rgba(16,185,129,0.15)', boxShadow: '0 2px 12px rgba(16,185,129,0.06)' }}>
-              <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: 'linear-gradient(to right,#10b981,#059669)' }} />
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg,#10b981,#059669)', boxShadow: '0 4px 12px rgba(16,185,129,0.35)' }}>
-                <Trophy className="w-4 h-4 text-white" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-2xl font-black leading-none tracking-tight" style={{ color: '#065f46' }}>{puntajePromedio !== null ? `${puntajePromedio}` : '—'}</div>
-                <div className="text-[11px] font-semibold leading-tight mt-0.5 uppercase tracking-wide" style={{ color: '#047857' }}>Puntaje</div>
-              </div>
-            </div>
-          )}
-
-          {/* Card 4: IA Activa */}
-          <div className="relative overflow-hidden rounded-2xl p-3.5 sm:p-4 flex items-center gap-2.5 sm:gap-3"
-            style={{ background: 'linear-gradient(145deg,#010B2B,#0d1f4a)', border: '1px solid rgba(0,168,232,0.25)', boxShadow: '0 2px 16px rgba(0,168,232,0.1)' }}>
-            <div className="absolute -top-5 -right-5 w-16 h-16 rounded-full opacity-15" style={{ background: 'radial-gradient(circle,#00A8E8,transparent)' }} />
-            <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: 'linear-gradient(to right,#00A8E8,#7c3aed)' }} />
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 relative z-10"
-              style={{ background: 'rgba(0,168,232,0.15)', border: '1px solid rgba(0,168,232,0.3)', boxShadow: '0 4px 12px rgba(0,168,232,0.2)' }}>
-              <Sparkles className="w-4 h-4 text-[#00A8E8]" />
-            </div>
-            <div className="relative z-10 min-w-0 flex-1">
-              <div className="flex items-center gap-1.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" style={{ boxShadow: '0 0 6px rgba(52,211,153,0.8)' }} />
-                <span className="text-white font-extrabold text-sm tracking-tight truncate">IA Activa</span>
-              </div>
-              <div className="text-[11px] font-semibold leading-tight mt-0.5 uppercase tracking-wide text-slate-400 truncate">Claude 4.6 Sonnet</div>
-            </div>
-          </div>
-
-        </div>
-      </div>
 
       {/* ── MAIN CONTENT ── */}
-      <div className="max-w-7xl mx-auto px-4 pb-12">
+      <div className="max-w-7xl mx-auto px-4 pt-6 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
           {/* SIDEBAR */}
@@ -264,9 +167,9 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
               if (selectedEnsayo) {
                 return (
                   /* ─ VISTA SEGÚN PARÁMETRO ─ */
-                  <div className="rounded-3xl overflow-hidden" style={{ background: 'white', border: '1px solid rgba(1,11,43,0.09)', boxShadow: '0 8px 40px rgba(0,0,0,0.06)' }}>
+                  <div className="rounded-3xl overflow-hidden" style={{ background: 'white', border: '1px solid rgba(0, 0, 0, 0.08)', boxShadow: '0 8px 40px rgba(0,0,0,0.04)' }}>
                     {/* Header */}
-                    <div className="px-3.5 sm:px-8 py-5 sm:py-6 flex flex-col md:flex-row justify-between md:items-center gap-4" style={{ background: 'linear-gradient(135deg, #010B2B 0%, #0d1f4a 100%)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                    <div className="px-3.5 sm:px-8 py-5 sm:py-6 flex flex-col md:flex-row justify-between md:items-center gap-4" style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
                       <div>
                         <h2 className="text-2xl font-extrabold text-white mb-2">
                           {vistaTexto ? '📄 Mi Ensayo' : 'Resultados del Análisis'}
@@ -351,7 +254,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
                         />
                       ) : (
                         <div className="flex flex-col items-center justify-center py-24 rounded-2xl" style={{ background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)', border: '1px dashed #cbd5e1' }}>
-                          <p className="text-xl font-extrabold text-[#010B2B] mb-2">Analizando tu ensayo...</p>
+                          <p className="text-xl font-extrabold text-[#0f172a] mb-2">Analizando tu ensayo...</p>
                         </div>
                       )}
                     </div>
@@ -359,13 +262,27 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
                 )
               }
 
-              if (vistaMentoria || (ensayosRestantes === 0 && !lead)) {
+              if (vistaMentoria) {
                 return (
                   /* ─ VISTA MENTORÍA ─ */
                   <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <div className="mb-6 flex items-center justify-between gap-3">
                       <div>
-                        <h2 className="text-xl sm:text-2xl font-extrabold text-[#010B2B]">Mentoría Premium</h2>
+                        <div className="flex items-center flex-wrap gap-2">
+                          <h2 className="text-xl sm:text-2xl font-extrabold text-[#010B2B]">Mentoría Premium</h2>
+                          {lead && (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide shadow-sm"
+                              style={{
+                                background: 'rgba(0, 168, 232, 0.08)',
+                                border: '1px solid rgba(0, 168, 232, 0.2)',
+                                color: '#00A8E8'
+                              }}
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#00A8E8] shadow-[0_0_6px_#00A8E8] animate-pulse" />
+                              Solicitud Activa
+                            </span>
+                          )}
+                        </div>
                         <p className="text-xs sm:text-sm text-slate-500 mt-1">Lleva tu aplicación al siguiente nivel con expertos.</p>
                       </div>
                       {ensayosRestantes > 0 && (
@@ -381,20 +298,11 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
                           emailDefault={user?.email || ''}
                           becaDefault={ensayos?.[0]?.beca_objetivo || ''}
                           paisDefault={ensayos?.[0]?.pais_destino || ''}
+                          hasExistingRequest={!!lead}
+                          ensayoDefault={ensayos?.[0]?.contenido || ''}
+                          pdfUrlDefault={ensayos?.[0]?.pdf_url || ''}
                         />
                       </div>
-                    </div>
-                  </div>
-                )
-              }
-
-              if (lead && ensayosRestantes === 0) {
-                return (
-                  /* ─ VISTA SOLICITUD RECIBIDA ─ */
-                  <div className="rounded-3xl overflow-hidden text-center" style={{ background: 'linear-gradient(145deg,#010B2B,#0d1f4a)', border: '1px solid rgba(74,222,128,0.25)', boxShadow: '0 12px 48px rgba(1,11,43,0.4)' }}>
-                    <div className="p-10">
-                      <h2 className="text-2xl font-extrabold text-white mb-3">¡Solicitud Recibida!</h2>
-                      <p className="text-slate-400">Nuestro equipo te contactará muy pronto para agendar tu mentoría.</p>
                     </div>
                   </div>
                 )
@@ -407,7 +315,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
                     <h2 className="text-2xl font-extrabold text-[#010B2B]">Nuevo Análisis</h2>
                     <p className="text-slate-500 mt-1">Pega tu carta de motivación y obtén feedback instantáneo.</p>
                   </div>
-                  <AnalyzeForm />
+                  <AnalyzeForm ensayosRestantes={ensayosRestantes} hasLead={!!lead} />
                 </div>
               )
             })()}
