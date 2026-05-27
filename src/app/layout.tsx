@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SOP Reviewer | Optimiza tu Ensayo de Beca con IA",
+  title: "SOP Reviewer | Optimiza tu Ensayo de Beca de Forma Profesional",
   description: "Obtén feedback instantáneo y sugerencias interlineales detalladas para ganar becas internacionales como Chevening, Fulbright y Fundación Carolina.",
 };
 

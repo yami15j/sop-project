@@ -105,6 +105,10 @@ export default function AnalyzeForm({ ensayosRestantes = 2, hasLead = false }: A
   const router = useRouter()
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showErrorTranslation, setShowErrorTranslation] = useState(false)
+  const [isTranslating, setIsTranslating] = useState(false)
+  const [originalText, setOriginalText] = useState<string | null>(null)
+  const [isTranslated, setIsTranslated] = useState(false)
   const [success, setSuccess] = useState(false)
   const [ensayoText, setEnsayoText] = useState('')
   const [wordCount, setWordCount] = useState(0)
@@ -123,7 +127,7 @@ export default function AnalyzeForm({ ensayosRestantes = 2, hasLead = false }: A
     "Evaluando gramática y vocabulario...",
     "Identificando fortalezas ocultas...",
     "Redactando áreas de mejora...",
-    "Generando reporte de IA...",
+    "Generando revisión técnica...",
   ]
 
   useEffect(() => {
@@ -140,6 +144,61 @@ export default function AnalyzeForm({ ensayosRestantes = 2, hasLead = false }: A
     }
     return () => clearInterval(interval)
   }, [isAnalyzing])
+
+  const isEssaySpanish = (text: string): boolean => {
+    const trimmed = text.toLowerCase()
+    const spanishWords = [' el ', ' la ', ' de ', ' y ', ' en ', ' que ', ' un ', ' una ', ' con ', ' para ', ' por ', ' como ']
+    
+    let esCount = 0
+    for (const word of spanishWords) {
+      if (trimmed.includes(word)) esCount++
+    }
+    
+    return esCount >= 2
+  }
+
+  async function handleTranslateEssay() {
+    if (!ensayoText.trim()) return
+    
+    // Si ya está traducido, restauramos instantáneamente el texto original
+    if (isTranslated && originalText) {
+      setEnsayoText(originalText)
+      setIsTranslated(false)
+      setOriginalText(null)
+      return
+    }
+
+    setIsTranslating(true)
+    setError(null)
+    
+    try {
+      const currentText = ensayoText
+      const isSpanish = isEssaySpanish(currentText)
+      const targetLang = isSpanish ? 'en' : 'es'
+      
+      const res = await fetch('/api/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          text: currentText, 
+          targetLang 
+        }),
+      })
+      
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'No se pudo traducir el ensayo.')
+      
+      if (data.translatedText) {
+        setOriginalText(currentText)
+        setEnsayoText(data.translatedText)
+        setIsTranslated(true)
+      }
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setIsTranslating(false)
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -158,6 +217,7 @@ export default function AnalyzeForm({ ensayosRestantes = 2, hasLead = false }: A
 
     setIsAnalyzing(true)
     setError(null)
+    setShowErrorTranslation(false)
     setSuccess(false)
     setLoadingMessageIndex(0)
 
@@ -496,6 +556,22 @@ export default function AnalyzeForm({ ensayosRestantes = 2, hasLead = false }: A
                       </Link>{' '}
                       para revisar tu ensayo.
                     </>
+                  ) : error.includes('||') ? (
+                    (() => {
+                      const parts = error.split('||')
+                      return (
+                        <span className="flex flex-col sm:flex-row sm:items-center gap-1.5 flex-wrap">
+                          <span>{showErrorTranslation ? (parts[1] || parts[0]).trim() : parts[0].trim()}</span>
+                          <button
+                            type="button"
+                            onClick={() => setShowErrorTranslation(!showErrorTranslation)}
+                            className="text-slate-400 hover:text-[#00A8E8] transition-colors underline font-extrabold text-[9px] uppercase tracking-wider focus:outline-none cursor-pointer shrink-0 inline-flex items-center ml-1.5"
+                          >
+                            {showErrorTranslation ? 'See in English' : 'Traducir al español'}
+                          </button>
+                        </span>
+                      )
+                    })()
                   ) : (
                     error
                   )}
@@ -506,11 +582,17 @@ export default function AnalyzeForm({ ensayosRestantes = 2, hasLead = false }: A
                 name="ensayo"
                 required
                 disabled={isAnalyzing}
+                spellCheck="false"
                 rows={16}
                 value={ensayoText}
                 onChange={(e) => {
                   setEnsayoText(e.target.value)
                   if (error) setError(null) // Limpiar el error al escribir
+                  // Si el usuario edita manualmente el texto, limpiamos el historial de traducción
+                  if (isTranslated) {
+                    setIsTranslated(false)
+                    setOriginalText(null)
+                  }
                 }}
                 placeholder="Escribe o pega tu Personal Statement o Carta de Motivación aquí, o sube un archivo PDF..."
                 style={{
@@ -523,6 +605,29 @@ export default function AnalyzeForm({ ensayosRestantes = 2, hasLead = false }: A
                 onFocus={() => setFocusedField('textarea')}
                 onBlur={() => setFocusedField(null)}
               />
+              
+              {/* BOTÓN TRADUCIR ENSAYO ORIGINAL */}
+              {!isEmpty && !isAnalyzing && (
+                <div className="mt-2 flex justify-end">
+                  <button
+                    type="button"
+                    disabled={isTranslating}
+                    onClick={handleTranslateEssay}
+                    className="text-slate-400 hover:text-[#00A8E8] transition-colors underline font-extrabold text-[10px] uppercase tracking-wider focus:outline-none cursor-pointer flex items-center gap-1.5"
+                  >
+                    {isTranslating ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-[#00A8E8]" />
+                        <span>Traduciendo...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>🌐 {isTranslated ? 'Restaurar texto original' : isEssaySpanish(ensayoText) ? 'Traducir al inglés' : 'Traducir al español'}</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
 
           {/* Botón Analizar */}

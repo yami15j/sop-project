@@ -14,6 +14,41 @@ interface FeedbackCardProps {
 
 export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOriginal, becaObjetivo, paisDestino }: FeedbackCardProps) {
   const [isDownloading, setIsDownloading] = useState(false)
+  const [showSpanish, setShowSpanish] = useState(false)
+
+  // Detect if the response has bilingual sections
+  const isBilingual = rawResponse.includes('||')
+
+  const getContentForLang = (text: string, getSpanish: boolean) => {
+    if (!text) return ''
+    if (!text.includes('||')) return text
+    const parts = text.split('||')
+    return getSpanish ? (parts[1] || parts[0]).trim() : parts[0].trim()
+  }
+
+  const getParsedItem = (line: string, getSpanish: boolean) => {
+    const cleanedLine = line.replace(/^\d+\.\s*/, '')
+    let text = cleanedLine
+    if (cleanedLine.includes('||')) {
+      const parts = cleanedLine.split('||')
+      text = getSpanish ? (parts[1] || parts[0]).trim() : parts[0].trim()
+    }
+
+    // Reemplazar jerga técnica académica (jargon) por términos elegantes en español
+    text = text
+      .replace(/Hook de apertura/gi, 'Introducción impactante')
+      .replace(/\bHook\b/gi, 'Introducción impactante')
+      .replace(/Fit con el programa/gi, 'Conexión académica')
+      .replace(/Fit con programa/gi, 'Conexión académica')
+      .replace(/Fit académico/gi, 'Conexión académica')
+      .replace(/\bFit\b/gi, 'Conexión académica')
+      .replace(/Momentos A-ha/gi, 'Transformación personal')
+      .replace(/Momentos Aha/gi, 'Transformación personal')
+      .replace(/Momento Aha/gi, 'Transformación personal')
+      .replace(/Plan de retorno/gi, 'Impacto a futuro')
+
+    return text
+  }
 
   // Parsing de las secciones incluyendo el nuevo ensayo anotado
   const annotatedSection = rawResponse.split('📝')[1] || ''
@@ -23,8 +58,22 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
   const mejorasStr = mainContent.split('🔧')[1]?.split('💡')[0] || ''
   const recomendacionStr = mainContent.split('💡')[1] || ''
 
-  const fortalezas = fortalezasStr.split('\n').filter(line => line.trim().startsWith('1.') || line.trim().startsWith('2.') || line.trim().startsWith('3.'))
-  const mejoras = mejorasStr.split('\n').filter(line => line.trim().startsWith('1.') || line.trim().startsWith('2.') || line.trim().startsWith('3.'))
+  const rawFortalezas = fortalezasStr.split('\n').filter(line => line.trim().startsWith('1.') || line.trim().startsWith('2.') || line.trim().startsWith('3.'))
+  const rawMejoras = mejorasStr.split('\n').filter(line => line.trim().startsWith('1.') || line.trim().startsWith('2.') || line.trim().startsWith('3.'))
+
+  const fortalezas = rawFortalezas.map(f => getParsedItem(f, showSpanish))
+  
+  let parsedMejoras = rawMejoras.map(m => getParsedItem(m, showSpanish))
+  if (puntajeEstimado === 10) {
+    parsedMejoras = []
+  } else if (puntajeEstimado === 9) {
+    parsedMejoras = parsedMejoras.slice(0, 1)
+  } else if (puntajeEstimado === 7 || puntajeEstimado === 8) {
+    parsedMejoras = parsedMejoras.slice(0, 2)
+  } else {
+    parsedMejoras = parsedMejoras.slice(0, 3)
+  }
+  const mejoras = parsedMejoras
 
   const nivelTexto = puntajeEstimado >= 8 ? '¡Excelente perfil!' : puntajeEstimado >= 6 ? 'Buen perfil, mejorable' : 'Necesita trabajo'
 
@@ -90,7 +139,7 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
                               </span>
 
                               <span className="block text-[11px] sm:text-[12px] leading-relaxed text-slate-600">
-                                {suggestion.replace(/\]$/, '')}
+                                {getContentForLang(suggestion.replace(/\]$/, ''), showSpanish)}
                               </span>
                             </span>
                           </span>
@@ -144,13 +193,50 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
     <div className="mt-2 text-slate-800">
 
       {/* ── INTERFAZ DEL DASHBOARD ── */}
-      <div className="flex flex-col md:flex-row justify-between items-center mb-8 pb-6 border-b border-slate-100 gap-4">
-        <div>
-          <h4 className="text-xl font-bold text-[#010B2B]">Resultados del Análisis IA</h4>
-          <p className="text-sm text-slate-500">Evaluado según los criterios de tu beca objetivo.</p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 pb-6 border-b border-slate-100 gap-4">
+        <div className="w-full md:w-auto">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <h4 className="text-xl font-bold text-[#010B2B]">Resultados del Análisis Técnico</h4>
+            
+            {/* SWITCH DESLIZANTE DE TRADUCCIÓN PREMIUM */}
+            {isBilingual && (
+              <div className="relative inline-flex items-center p-0.5 bg-[#F1F5F9] border border-slate-200/50 rounded-xl select-none w-[180px] h-[34px] shadow-inner shrink-0 self-start sm:self-auto transition-all duration-300">
+                {/* Deslizador de fondo */}
+                <div 
+                  className="absolute top-0.5 bottom-0.5 w-[85px] bg-white border border-slate-200/25 rounded-lg shadow-sm transition-all duration-300 ease-out"
+                  style={{
+                    left: showSpanish ? '91px' : '4px'
+                  }}
+                />
+                
+                {/* Botón Original */}
+                <button
+                  type="button"
+                  onClick={() => setShowSpanish(false)}
+                  className={`relative z-10 w-[85px] h-full text-center text-[9px] font-extrabold uppercase tracking-wider transition-colors duration-200 flex items-center justify-center gap-1 focus:outline-none ${!showSpanish ? 'text-[#010B2B]' : 'text-slate-400 hover:text-slate-600'}`}
+                >
+                  🌐 Original
+                </button>
+                
+                {/* Botón Español */}
+                <button
+                  type="button"
+                  onClick={() => setShowSpanish(true)}
+                  className={`relative z-10 w-[85px] h-full text-center text-[9px] font-extrabold uppercase tracking-wider transition-colors duration-200 flex items-center justify-center gap-1 focus:outline-none ${showSpanish ? 'text-[#010B2B]' : 'text-slate-400 hover:text-slate-600'}`}
+                >
+                  🇪🇸 Español
+                </button>
+              </div>
+            )}
+          </div>
+          <p className="text-sm text-slate-500 mt-1">
+            {isBilingual && showSpanish 
+              ? 'Evaluado según los criterios de tu beca (Traducción en Español).' 
+              : 'Evaluado según los criterios de tu beca objetivo.'}
+          </p>
         </div>
         {/* Diseño Minimalista Premium (Solo Tipografía) */}
-        <div className="flex flex-col items-end justify-center">
+        <div className="flex flex-col items-end justify-center shrink-0">
           <div className="flex items-baseline gap-0.5">
             <span className={`text-2xl font-black tracking-tight leading-none ${puntajeEstimado >= 8 ? "text-emerald-500" :
               puntajeEstimado >= 6 ? "text-[#00A8E8]" :
@@ -188,19 +274,34 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
         </div>
 
         <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
-          <div className="bg-orange-50/50 border-b border-slate-100 px-4 py-2 flex items-center gap-2">
-            <AlertTriangle className="w-3.5 h-3.5 text-orange-600" />
-            <h5 className="font-bold text-[11px] text-orange-900 uppercase tracking-widest">Áreas de Mejora</h5>
+          <div className={`${puntajeEstimado === 10 ? 'bg-indigo-50/50' : 'bg-orange-50/50'} border-b border-slate-100 px-4 py-2 flex items-center gap-2`}>
+            {puntajeEstimado === 10 ? (
+              <CheckCircle className="w-3.5 h-3.5 text-indigo-600" />
+            ) : (
+              <AlertTriangle className="w-3.5 h-3.5 text-orange-600" />
+            )}
+            <h5 className={`font-bold text-[11px] ${puntajeEstimado === 10 ? 'text-indigo-950' : 'text-orange-900'} uppercase tracking-widest`}>Áreas de Mejora</h5>
           </div>
           <div className="p-3.5 sm:p-4">
-            <ul className="space-y-2">
-              {mejoras.map((m, i) => (
-                <li key={i} className="flex items-start gap-2.5 text-[12px] sm:text-[13px] text-slate-700">
-                  <span className="w-4 h-4 flex-shrink-0 flex items-center justify-center rounded-full bg-orange-100 text-orange-700 text-[9px] font-bold mt-0.5">{i + 1}</span>
-                  <span className="leading-snug">{m.replace(/^\d+\.\s*/, '')}</span>
-                </li>
-              ))}
-            </ul>
+            {puntajeEstimado === 10 ? (
+              <div className="flex items-start gap-2.5 text-[12px] sm:text-[13px] text-slate-700">
+                <span className="w-4 h-4 flex-shrink-0 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-700 text-[9px] font-bold mt-0.5">✓</span>
+                <span className="leading-snug font-medium italic">
+                  {isBilingual 
+                    ? (showSpanish ? "¡Excelente! Tu ensayo es excepcional, no requiere áreas de mejora." : "Excellent! Your essay is exceptional, no areas of improvement needed.") 
+                    : "¡Excelente! Tu ensayo es excepcional, no requiere áreas de mejora."}
+                </span>
+              </div>
+            ) : (
+              <ul className="space-y-2">
+                {mejoras.map((m, i) => (
+                  <li key={i} className="flex items-start gap-2.5 text-[12px] sm:text-[13px] text-slate-700">
+                    <span className="w-4 h-4 flex-shrink-0 flex items-center justify-center rounded-full bg-orange-100 text-orange-700 text-[9px] font-bold mt-0.5">{i + 1}</span>
+                    <span className="leading-snug">{m.replace(/^\d+\.\s*/, '')}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </div>
@@ -231,9 +332,9 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
               <Lightbulb className="w-6 h-6" />
             </div>
             <div className="flex-1">
-              <h4 className="text-[#010B2B] font-bold text-lg mb-2">Recomendación de la IA</h4>
-              <p className="text-slate-600 text-[13px] sm:text-[15px] leading-relaxed">
-                {recomendacionStr.replace(/RECOMENDACIÓN FINAL:/i, '').trim()}
+              <h4 className="text-[#010B2B] font-bold text-lg mb-2">Recomendación del Asistente</h4>
+              <p className="text-slate-600 text-[13px] sm:text-[15px] leading-relaxed transition-all duration-300">
+                {getContentForLang(recomendacionStr.replace(/RECOMENDACIÓN FINAL:/i, '').trim(), showSpanish)}
               </p>
             </div>
           </div>

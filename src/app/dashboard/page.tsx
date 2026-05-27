@@ -210,7 +210,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
                                 className="px-3 py-1.5 rounded-lg font-bold transition-all text-xs hover:bg-white/15"
                                 style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}
                               >
-                                {vistaTexto ? '📊 Ver análisis IA' : '📄 Ver ensayo'}
+                                {vistaTexto ? '📊 Ver análisis técnico' : '📄 Ver ensayo'}
                               </Link>
                             )}
                             <Link
