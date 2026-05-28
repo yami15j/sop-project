@@ -26,7 +26,21 @@ export async function resetPassword(formData: FormData) {
 
   if (error) {
     console.error('[RESET_PASSWORD_UPDATE_ERROR]', error)
-    redirect(`/reset-password?error=${encodeURIComponent('No se pudo actualizar la contraseña: ' + error.message)}`)
+    
+    let mensaje = 'No se pudo actualizar la contraseña. Por favor, inténtalo de nuevo.'
+    const msgLower = error.message.toLowerCase()
+    
+    if (msgLower.includes('should be at least') || msgLower.includes('password should be')) {
+      mensaje = 'La contraseña debe tener al menos 6 caracteres.'
+    } else if (msgLower.includes('different') || msgLower.includes('same as')) {
+      mensaje = 'La nueva contraseña debe ser diferente a la actual.'
+    } else if (msgLower.includes('expired') || msgLower.includes('invalid')) {
+      mensaje = 'El enlace de recuperación ha expirado o ya no es válido. Por favor, solicita uno nuevo.'
+    } else {
+      mensaje = `No se pudo actualizar la contraseña: ${error.message}`
+    }
+
+    redirect(`/reset-password?error=${encodeURIComponent(mensaje)}`)
   }
 
   // Redirigir al dashboard con un banner informativo de éxito
