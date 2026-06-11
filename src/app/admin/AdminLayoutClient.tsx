@@ -16,7 +16,8 @@ import {
   BookOpen,
   Search,
   ChevronDown,
-  AlertTriangle
+  AlertTriangle,
+  GraduationCap
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -136,6 +137,10 @@ export default function AdminLayoutClient({ email, nombre: nombreInicial, telefo
   const [showSidebarProfileMenu, setShowSidebarProfileMenu] = useState(false)
   const sidebarProfileRef = useRef<HTMLDivElement>(null)
 
+  // ── Estados Top Profile ──
+  const [showTopProfileMenu, setShowTopProfileMenu] = useState(false)
+  const topProfileRef = useRef<HTMLDivElement>(null)
+
   // Nombre mostrado (se carga de localStorage si existe, o del backend)
   const [displayNombre, setDisplayNombre] = useState(nombreInicial || 'Administrador')
   const [displayFoto, setDisplayFoto] = useState('')
@@ -163,6 +168,9 @@ export default function AdminLayoutClient({ email, nombre: nombreInicial, telefo
       }
       if (sidebarProfileRef.current && !sidebarProfileRef.current.contains(e.target as Node)) {
         setShowSidebarProfileMenu(false)
+      }
+      if (topProfileRef.current && !topProfileRef.current.contains(e.target as Node)) {
+        setShowTopProfileMenu(false)
       }
     }
     document.addEventListener('mousedown', handler)
@@ -260,6 +268,18 @@ export default function AdminLayoutClient({ email, nombre: nombreInicial, telefo
                   <span>{label}</span>
                 </Link>
               ))}
+
+              <div className="h-[1px] bg-white/10 my-3.5" />
+
+              <Link
+                href="/dashboard"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full px-4 py-3 rounded-xl flex items-center gap-3 text-xs font-bold transition-all text-slate-300 hover:text-slate-100 hover:bg-white/5"
+              >
+                <GraduationCap className="w-4 h-4 text-[#00A8E8]" />
+                <span>Vista Estudiante</span>
+              </Link>
             </nav>
           </div>
         </div>
@@ -276,6 +296,17 @@ export default function AdminLayoutClient({ email, nombre: nombreInicial, telefo
               >
                 <User className="w-4 h-4 text-blue-600" />
                 <span>Mi Perfil</span>
+              </Link>
+
+              <Link
+                href="/dashboard"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setShowSidebarProfileMenu(false)}
+                className="w-full px-3 py-2.5 rounded-xl flex items-center gap-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all text-left cursor-pointer"
+              >
+                <GraduationCap className="w-4 h-4 text-[#00A8E8]" />
+                <span>Vista Estudiante</span>
               </Link>
 
               <div className="h-[1px] bg-slate-100 my-1" />
@@ -478,25 +509,65 @@ export default function AdminLayoutClient({ email, nombre: nombreInicial, telefo
               <div className="w-px h-6 bg-slate-200" />
 
               {/* Avatar + Nombre del Admin */}
-              <Link
-                href="/admin/perfil"
-                className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl hover:bg-slate-100 transition-colors animate-in fade-in duration-300"
-              >
-                <div className="w-8 h-8 rounded-full bg-slate-800 overflow-hidden flex items-center justify-center text-white text-xs font-extrabold shrink-0">
-                  {displayFoto ? (
-                    <img src={displayFoto} alt="Admin" className="w-full h-full object-cover" id="admin-avatar-img" />
-                  ) : (
-                    <span id="admin-avatar-initials">{initials}</span>
-                  )}
-                </div>
-                <div className="flex flex-col text-left items-start">
-                  <span className="text-xs font-bold text-slate-800 leading-none">{displayNombre}</span>
-                  <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-slate-100 border border-slate-200 text-slate-600 mt-1 leading-none">
-                    Admin
-                  </span>
-                </div>
-                <ChevronDown className="w-4 h-4 text-slate-400 shrink-0 ml-0.5" />
-              </Link>
+              <div className="relative" ref={topProfileRef}>
+                <button
+                  onClick={() => setShowTopProfileMenu(v => !v)}
+                  className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl hover:bg-slate-100 transition-colors animate-in fade-in duration-300 cursor-pointer"
+                >
+                  <div className="w-8 h-8 rounded-full bg-slate-800 overflow-hidden flex items-center justify-center text-white text-xs font-extrabold shrink-0">
+                    {displayFoto ? (
+                      <img src={displayFoto} alt="Admin" className="w-full h-full object-cover" id="admin-avatar-img" />
+                    ) : (
+                      <span id="admin-avatar-initials">{initials}</span>
+                    )}
+                  </div>
+                  <div className="flex flex-col text-left items-start">
+                    <span className="text-xs font-bold text-slate-800 leading-none">{displayNombre}</span>
+                    <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-slate-100 border border-slate-200 text-slate-600 mt-1 leading-none">
+                      Admin
+                    </span>
+                  </div>
+                  <ChevronDown className="w-4 h-4 text-slate-400 shrink-0 ml-0.5" />
+                </button>
+
+                {/* Menú desplegable */}
+                {showTopProfileMenu && (
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl border border-slate-200 shadow-[0_10px_40px_rgba(15,23,42,0.12)] p-2 z-50 animate-in slide-in-from-top-2 duration-200 flex flex-col gap-1 text-slate-800">
+                    <Link
+                      href="/admin/perfil"
+                      onClick={() => setShowTopProfileMenu(false)}
+                      className="w-full px-3 py-2 rounded-xl flex items-center gap-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all text-left cursor-pointer"
+                    >
+                      <User className="w-4 h-4 text-blue-600" />
+                      <span>Mi Perfil</span>
+                    </Link>
+
+                    <Link
+                      href="/dashboard"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setShowTopProfileMenu(false)}
+                      className="w-full px-3 py-2 rounded-xl flex items-center gap-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all text-left cursor-pointer"
+                    >
+                      <GraduationCap className="w-4 h-4 text-[#00A8E8]" />
+                      <span>Vista Estudiante</span>
+                    </Link>
+
+                    <div className="h-[1px] bg-slate-100 my-1" />
+                    <button
+                      onClick={async () => {
+                        setShowTopProfileMenu(false)
+                        const { logout } = await import('@/app/dashboard/actions')
+                        await logout()
+                      }}
+                      className="w-full px-3 py-2 rounded-xl flex items-center gap-2.5 text-xs font-bold text-red-500 hover:bg-red-50 transition-all text-left cursor-pointer"
+                    >
+                      <LogOut className="w-4 h-4 text-red-500" />
+                      <span>Cerrar sesión</span>
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </header>
         )}

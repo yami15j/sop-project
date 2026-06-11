@@ -17,8 +17,13 @@ import {
   ZoomIn,
   ZoomOut,
   Crop,
-  X
+  X,
+  BookOpen,
+  ChevronDown,
+  LogOut,
+  GraduationCap
 } from 'lucide-react'
+import Link from 'next/link'
 import { createClient } from '@/utils/supabase/client'
 import { actualizarPerfilAdmin } from '@/app/admin/actions'
 
@@ -304,6 +309,10 @@ export default function PerfilPage() {
   const [showNotifPanel, setShowNotifPanel] = useState(false)
   const [readIds, setReadIds] = useState<Set<string>>(new Set())
 
+  // Top Profile Dropdown state
+  const [showTopProfileMenu, setShowTopProfileMenu] = useState(false)
+  const topProfileRef = useRef<HTMLDivElement>(null)
+
   const fileInputRef = useRef<HTMLInputElement>(null)
   const notifRef = useRef<HTMLDivElement>(null)
   const supabaseRef = useRef(createClient())
@@ -407,6 +416,9 @@ export default function PerfilPage() {
     const handler = (e: MouseEvent) => {
       if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
         setShowNotifPanel(false)
+      }
+      if (topProfileRef.current && !topProfileRef.current.contains(e.target as Node)) {
+        setShowTopProfileMenu(false)
       }
     }
     document.addEventListener('mousedown', handler)
@@ -600,20 +612,64 @@ export default function PerfilPage() {
             <div className="w-px h-6 bg-slate-200" />
 
             {/* Avatar + Nombre del Admin */}
-            <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl hover:bg-slate-200/50 transition-all">
-              <div className="w-8 h-8 rounded-full bg-slate-800 overflow-hidden flex items-center justify-center text-white text-xs font-extrabold shrink-0">
-                {foto ? (
-                  <img src={foto} alt="Admin" className="w-full h-full object-cover" />
-                ) : (
-                  <span>{initials}</span>
-                )}
-              </div>
-              <div className="flex flex-col text-left items-start">
-                <span className="text-xs font-bold text-slate-800 leading-none">{nombre || 'Administrador'}</span>
-                <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-slate-100 border border-slate-200 text-slate-600 mt-1 leading-none">
-                  Admin
-                </span>
-              </div>
+            <div className="relative" ref={topProfileRef}>
+              <button
+                onClick={() => setShowTopProfileMenu(v => !v)}
+                className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl hover:bg-slate-200/50 transition-all cursor-pointer animate-in fade-in duration-300"
+              >
+                <div className="w-8 h-8 rounded-full bg-slate-800 overflow-hidden flex items-center justify-center text-white text-xs font-extrabold shrink-0">
+                  {foto ? (
+                    <img src={foto} alt="Admin" className="w-full h-full object-cover" />
+                  ) : (
+                    <span>{initials}</span>
+                  )}
+                </div>
+                <div className="flex flex-col text-left items-start">
+                  <span className="text-xs font-bold text-slate-800 leading-none">{nombre || 'Administrador'}</span>
+                  <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-slate-100 border border-slate-200 text-slate-600 mt-1 leading-none">
+                    Admin
+                  </span>
+                </div>
+                <ChevronDown className="w-4 h-4 text-slate-400 shrink-0 ml-0.5" />
+              </button>
+
+              {/* Menú desplegable */}
+              {showTopProfileMenu && (
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl border border-slate-200 shadow-[0_10px_40px_rgba(15,23,42,0.12)] p-2 z-50 animate-in slide-in-from-top-2 duration-200 flex flex-col gap-1 text-slate-800">
+                  <Link
+                    href="/admin/perfil"
+                    onClick={() => setShowTopProfileMenu(false)}
+                    className="w-full px-3 py-2 rounded-xl flex items-center gap-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all text-left cursor-pointer"
+                  >
+                    <User className="w-4 h-4 text-blue-600" />
+                    <span>Mi Perfil</span>
+                  </Link>
+
+                  <Link
+                    href="/dashboard"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setShowTopProfileMenu(false)}
+                    className="w-full px-3 py-2 rounded-xl flex items-center gap-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all text-left cursor-pointer"
+                  >
+                    <GraduationCap className="w-4 h-4 text-[#00A8E8]" />
+                    <span>Vista Estudiante</span>
+                  </Link>
+
+                  <div className="h-[1px] bg-slate-100 my-1" />
+                  <button
+                    onClick={async () => {
+                      setShowTopProfileMenu(false)
+                      const { logout } = await import('@/app/dashboard/actions')
+                      await logout()
+                    }}
+                    className="w-full px-3 py-2 rounded-xl flex items-center gap-2.5 text-xs font-bold text-red-500 hover:bg-red-50 transition-all text-left cursor-pointer"
+                  >
+                    <LogOut className="w-4 h-4 text-red-500" />
+                    <span>Cerrar sesión</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -813,6 +869,17 @@ export default function PerfilPage() {
                     <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full">Activa</span>
                   </div>
                 </div>
+
+                <div className="h-[1px] bg-slate-100 my-1" />
+
+                <Link
+                  href="/dashboard"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-extrabold rounded-xl text-xs flex items-center justify-center transition-all duration-300 shadow-[0_4px_14px_rgba(37,99,235,0.3)] hover:shadow-[0_6px_20px_rgba(37,99,235,0.4)] hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                >
+                  <span>Ir al Dashboard Estudiante</span>
+                </Link>
               </div>
 
             </div>
