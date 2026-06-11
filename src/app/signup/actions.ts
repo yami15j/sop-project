@@ -7,11 +7,11 @@ import { createClient } from '@/utils/supabase/server'
 
 export async function signup(formData: FormData) {
   const supabase = await createClient()
-  
+
   // Obtener el origen de forma súper robusta para evitar errores como la cadena "null"
   const headersList = await headers()
   let origin = headersList.get('origin')
-  
+
   if (!origin || origin === 'null') {
     const host = headersList.get('host')
     if (host) {
@@ -26,8 +26,9 @@ export async function signup(formData: FormData) {
   const apellido = (formData.get('apellido') as string || '').trim()
   const email = (formData.get('email') as string || '').trim()
   const password = (formData.get('password') as string || '').trim()
+  const telefono = (formData.get('telefono') as string || '').trim()
 
-  if (!nombre || !apellido || !email || !password) {
+  if (!nombre || !apellido || !email || !password || !telefono) {
     redirect(`/signup?error=${encodeURIComponent('Por favor, rellena todos los campos del formulario.')}`)
   }
 
@@ -40,16 +41,17 @@ export async function signup(formData: FormData) {
         full_name: `${nombre} ${apellido}`.trim(),
         nombre,
         apellido,
+        telefono,
       }
     }
   })
 
   if (error) {
     console.error('[SIGNUP_ERROR] Error completo de Supabase:', error)
-    
+
     let mensaje = 'Ocurrió un error al crear la cuenta. Por favor, inténtalo de nuevo.'
     const msgLower = error.message.toLowerCase()
-    
+
     if (msgLower.includes('invalid format') || msgLower.includes('unable to validate email') || msgLower.includes('invalid email')) {
       mensaje = 'El correo electrónico ingresado no es válido. Verifica el formato (ej. nombre@correo.com).'
     } else if (msgLower.includes('already registered') || msgLower.includes('already been registered') || msgLower.includes('user already exists')) {
@@ -65,7 +67,7 @@ export async function signup(formData: FormData) {
     } else {
       mensaje = `No pudimos completar tu registro: ${error.message}`
     }
-    
+
     redirect(`/signup?error=${encodeURIComponent(mensaje)}`)
   }
 

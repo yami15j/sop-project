@@ -1,10 +1,10 @@
 'use client'
 
-import { use } from 'react'
+import { use, useState, useEffect } from 'react'
 import { signup } from './actions'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, Sparkles, User, Mail, Lock } from 'lucide-react'
+import { ArrowLeft, Sparkles, User, Mail, Lock, Phone } from 'lucide-react'
 import ErrorBanner from '@/components/ErrorBanner'
 import PasswordInput from '@/components/PasswordInput'
 
@@ -14,6 +14,12 @@ export default function SignupPage({
   searchParams: Promise<{ error?: string, msg?: string }>
 }) {
   const params = use(searchParams);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Reset loading state when an error is received from the server action redirect
+  useEffect(() => {
+    setIsSubmitting(false);
+  }, [params?.error]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#030712] font-sans selection:bg-[#00A8E8]/20 selection:text-white px-4 py-8 relative overflow-hidden">
@@ -73,6 +79,12 @@ export default function SignupPage({
         <form 
           action={signup}
           onSubmit={(e) => {
+            if (isSubmitting) {
+              e.preventDefault();
+              return;
+            }
+            setIsSubmitting(true);
+
             const emailInput = document.getElementById('email') as HTMLInputElement
             const passwordInput = document.getElementById('password') as HTMLInputElement
             if (emailInput?.value && passwordInput?.value) {
@@ -90,7 +102,7 @@ export default function SignupPage({
                 htmlFor="nombre"
                 className="mb-2 block text-[10px] font-black uppercase tracking-widest text-[#00A8E8]"
               >
-                Nombre
+                Nombres
               </label>
               <div className="relative group">
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#00A8E8] transition-colors duration-300 z-10 pointer-events-none">
@@ -100,7 +112,7 @@ export default function SignupPage({
                   id="nombre"
                   name="nombre"
                   type="text"
-                  placeholder="Juan"
+                  placeholder="Ej. Juan Carlos"
                   required
                   className="w-full rounded-2xl border border-white/20 bg-slate-950/30 hover:bg-slate-950/50 hover:border-white/30 pl-11 pr-4 py-3.5 text-sm sm:text-base text-white placeholder-slate-500 outline-none transition-all duration-300 focus:bg-slate-950/80 focus:border-[#00A8E8] focus:ring-4 focus:ring-[#00A8E8]/10"
                 />
@@ -111,7 +123,7 @@ export default function SignupPage({
                 htmlFor="apellido"
                 className="mb-2 block text-[10px] font-black uppercase tracking-widest text-[#00A8E8]"
               >
-                Apellido
+                Apellidos
               </label>
               <div className="relative group">
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#00A8E8] transition-colors duration-300 z-10 pointer-events-none">
@@ -121,7 +133,7 @@ export default function SignupPage({
                   id="apellido"
                   name="apellido"
                   type="text"
-                  placeholder="Pérez"
+                  placeholder="Ej. Pérez Gómez"
                   required
                   className="w-full rounded-2xl border border-white/20 bg-slate-950/30 hover:bg-slate-950/50 hover:border-white/30 pl-11 pr-4 py-3.5 text-sm sm:text-base text-white placeholder-slate-500 outline-none transition-all duration-300 focus:bg-slate-950/80 focus:border-[#00A8E8] focus:ring-4 focus:ring-[#00A8E8]/10"
                 />
@@ -156,6 +168,28 @@ export default function SignupPage({
 
           <div>
             <label
+              htmlFor="telefono"
+              className="mb-2 block text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-[#00A8E8]"
+            >
+              Teléfono / WhatsApp
+            </label>
+            <div className="relative group">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#00A8E8] transition-colors duration-300 z-10 pointer-events-none">
+                <Phone className="w-4.5 h-4.5" />
+              </div>
+              <input
+                id="telefono"
+                name="telefono"
+                type="tel"
+                placeholder="Ej. +593987654321"
+                required
+                className="w-full rounded-2xl border border-white/20 bg-slate-950/30 hover:bg-slate-950/50 hover:border-white/30 pl-11 pr-4 py-3.5 text-sm sm:text-base text-white placeholder-slate-500 outline-none transition-all duration-300 focus:bg-slate-950/80 focus:border-[#00A8E8] focus:ring-4 focus:ring-[#00A8E8]/10"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label
               htmlFor="password"
               className="mb-2 block text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-[#00A8E8]"
             >
@@ -183,20 +217,25 @@ export default function SignupPage({
           <div className="mt-2 flex flex-col gap-4">
             <button
               type="submit"
-              onClick={() => {
-                const emailInput = document.getElementById('email') as HTMLInputElement
-                const passwordInput = document.getElementById('password') as HTMLInputElement
-                if (emailInput?.value && passwordInput?.value) {
-                  sessionStorage.setItem('signup_email', emailInput.value)
-                  sessionStorage.setItem('signup_password', passwordInput.value)
-                }
-              }}
-              className="w-full rounded-2xl bg-gradient-to-r from-[#00A8E8] to-[#007cb0] hover:from-[#00B4FA] hover:to-[#008cc2] py-4.5 font-black text-white transition-all duration-300 shadow-lg shadow-[#00A8E8]/20 hover:shadow-xl hover:shadow-[#00A8E8]/35 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] text-sm sm:text-base flex items-center justify-center gap-2 group/btn"
+              disabled={isSubmitting}
+              className="w-full rounded-2xl bg-gradient-to-r from-[#00A8E8] to-[#007cb0] hover:from-[#00B4FA] hover:to-[#008cc2] py-4.5 font-black text-white transition-all duration-300 shadow-lg shadow-[#00A8E8]/20 hover:shadow-xl hover:shadow-[#00A8E8]/35 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] text-sm sm:text-base flex items-center justify-center gap-2 group/btn disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span>Crear mi cuenta gratis</span>
-              <svg className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Creando cuenta...</span>
+                </>
+              ) : (
+                <>
+                  <span>Crear mi cuenta gratis</span>
+                  <svg className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </>
+              )}
             </button>
 
             <div className="flex items-center gap-3 my-2">

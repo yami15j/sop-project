@@ -6,26 +6,26 @@ import { CheckCircle2, ShieldCheck, Laptop } from 'lucide-react'
 export default function VerifiedStaticPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#070b19] font-sans p-6 text-slate-300 select-none relative overflow-hidden">
-      
+
       {/* Redes de fondo muy sutiles estilo tecnológico limpio */}
       <div className="absolute inset-0 opacity-[0.02] pointer-events-none">
-        <div 
-          className="absolute inset-0" 
-          style={{ 
+        <div
+          className="absolute inset-0"
+          style={{
             backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)`,
             backgroundSize: '30px 30px'
-          }} 
+          }}
         />
       </div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         className="w-full max-w-[420px] rounded-[32px] border border-white/5 bg-[#0d1326] p-8 sm:p-10 shadow-2xl relative z-10 text-center"
       >
         <div className="flex flex-col items-center">
-          
+
           {/* Símbolo de Verificación Oficial Protegido */}
           <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-6 shadow-inner">
             <CheckCircle2 className="w-7 h-7 text-emerald-400" />
@@ -35,7 +35,7 @@ export default function VerifiedStaticPage() {
           <h1 className="text-xl font-bold tracking-tight text-white mb-2">
             Correo Electrónico Confirmado
           </h1>
-          
+
           <p className="text-xs text-slate-400 font-medium mb-8 leading-relaxed max-w-[280px]">
             Tu cuenta ha sido activada de forma segura por el proveedor de autenticación.
           </p>
@@ -60,7 +60,7 @@ export default function VerifiedStaticPage() {
             <ShieldCheck className="w-3.5 h-3.5 text-slate-500" />
             <span>Ya puedes cerrar esta pestaña</span>
           </div>
-          
+
         </div>
       </motion.div>
 

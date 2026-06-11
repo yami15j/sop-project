@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { Resend } from 'resend'
+import { cookies } from 'next/headers'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 

@@ -105,7 +105,7 @@ export default async function WelcomePage({
               {
                 icon: FileText,
                 title: '2 evaluaciones gratuitas',
-                desc: 'Sube tu Personal Statement y recibe revisión técnica al instante.',
+                desc: 'Sube tu Personal Statement y recibe feedback de IA al instante.',
                 color: 'text-[#00A8E8]',
                 bg: 'bg-[#00A8E8]/10',
               },
@@ -148,7 +148,7 @@ export default async function WelcomePage({
         </Link>
 
         <p className="text-center text-slate-600 text-xs mt-5">
-          La Comunidad del Intercambio · Revisión técnica de ensayos
+          La Comunidad del Intercambio · Evaluación de ensayos con IA
         </p>
       </div>
     </div>

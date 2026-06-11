@@ -31,12 +31,12 @@ function checkRateLimit(ip: string): boolean {
 function isTextEnglish(text: string): boolean {
   const trimmed = text.toLowerCase()
   const spanishWords = [' el ', ' la ', ' de ', ' y ', ' en ', ' que ', ' un ', ' una ', ' con ', ' para ', ' por ', ' como ']
-  
+
   let esCount = 0
   for (const word of spanishWords) {
     if (trimmed.includes(word)) esCount++
   }
-  
+
   // Si no tiene suficientes palabras en español, asumimos que es un idioma extranjero (inglés, francés, portugués, alemán, etc.)
   return esCount < 2
 }
@@ -48,29 +48,29 @@ function validateTextAsEssay(text: string): { isValid: boolean; reason?: string 
   const isEnglish = isTextEnglish(trimmed)
 
   if (len < 50) {
-    return { 
-      isValid: false, 
-      reason: isEnglish 
+    return {
+      isValid: false,
+      reason: isEnglish
         ? 'The essay is too short. Please write at least 50 characters. || El ensayo es muy corto. Escribe al menos 50 caracteres.'
-        : 'El ensayo es muy corto. Escribe al menos 50 caracteres.' 
+        : 'El ensayo es muy corto. Escribe al menos 50 caracteres.'
     }
   }
 
   // 1. Detección de JSON o XML/HTML
   if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
-    return { 
-      isValid: false, 
+    return {
+      isValid: false,
       reason: isEnglish
         ? 'JSON format is not allowed. Please paste your essay in prose. || Formato JSON no permitido. Pega tu ensayo en prosa.'
-        : 'Formato JSON no permitido. Pega tu ensayo en prosa.' 
+        : 'Formato JSON no permitido. Pega tu ensayo en prosa.'
     }
   }
   if (trimmed.startsWith('<') && trimmed.endsWith('>')) {
-    return { 
-      isValid: false, 
+    return {
+      isValid: false,
       reason: isEnglish
         ? 'HTML/XML code is not allowed. Please enter your essay in plain text. || Código HTML/XML no permitido. Ingresa tu ensayo en texto plano.'
-        : 'Código HTML/XML no permitido. Ingresa tu ensayo en texto plano.' 
+        : 'Código HTML/XML no permitido. Ingresa tu ensayo en texto plano.'
     }
   }
 
@@ -83,33 +83,33 @@ function validateTextAsEssay(text: string): { isValid: boolean; reason?: string 
     /\bdef\s+\w+\s*\(.*\)\s*:/, /\bif\s+__name__\s*==\s*['"]__main__['"]/,
     /console\.log\(/, /printf\(/, /println\(/
   ]
-  
+
   let keywordMatches = 0
   for (const regex of codeKeywords) {
     if (regex.test(text)) keywordMatches++
   }
 
   if (keywordMatches >= 2 || (keywordMatches >= 1 && text.includes('{') && text.includes('}'))) {
-    return { 
-      isValid: false, 
+    return {
+      isValid: false,
       reason: isEnglish
         ? 'Programming code detected. Please enter your essay written in prose. || Código de programación detectado. Por favor, ingresa tu ensayo escrito en prosa.'
-        : 'Código de programación detectado. Por favor, ingresa tu ensayo escrito en prosa.' 
+        : 'Código de programación detectado. Por favor, ingresa tu ensayo escrito en prosa.'
     }
   }
 
   // 3. Detección de documentos estructurados de datos, formularios o cronogramas (exceso de dos puntos ":" o guiones "-")
   const colonCount = (text.match(/:/g) || []).length
-  
+
   // En un ensayo normal de 500 palabras (aprox 3000 caracteres), puede haber a lo mucho 2 o 3 dos puntos.
   // Si la densidad de ":" es muy alta (por ejemplo, más de 1 por cada 150 caracteres), es un formulario, cronograma o presupuesto.
   const colonDensity = colonCount / len
   if (colonDensity > 0.006 && len > 200) {
-    return { 
-      isValid: false, 
+    return {
+      isValid: false,
       reason: isEnglish
         ? 'The text seems to be a schedule, list, or form. Please enter an essay written in prose. || El texto parece ser un cronograma, lista o formulario. Ingresa un ensayo redactado en prosa.'
-        : 'El texto parece ser un cronograma, lista o formulario. Ingresa un ensayo redactado en prosa.' 
+        : 'El texto parece ser un cronograma, lista o formulario. Ingresa un ensayo redactado en prosa.'
     }
   }
 
@@ -117,11 +117,11 @@ function validateTextAsEssay(text: string): { isValid: boolean; reason?: string 
   const digitCount = (text.match(/\d/g) || []).length
   const digitRatio = digitCount / len
   if (digitRatio > 0.12 && len > 100) {
-    return { 
-      isValid: false, 
+    return {
+      isValid: false,
       reason: isEnglish
         ? 'Too many numbers detected. Please enter your application essay written in prose. || Se detectaron demasiadas cifras/números. Ingresa tu ensayo de postulación redactado en prosa.'
-        : 'Se detectaron demasiadas cifras/números. Ingresa tu ensayo de postulación redactado en prosa.' 
+        : 'Se detectaron demasiadas cifras/números. Ingresa tu ensayo de postulación redactado en prosa.'
     }
   }
 
@@ -212,13 +212,13 @@ export async function POST(req: Request) {
           type: 'adaptive'
         }
       })
-      
+
       // Extraemos el texto de la respuesta filtrando solo los bloques de tipo 'text'
       claudeResponse = message.content
         .filter((c): c is Anthropic.TextBlock => c.type === 'text')
         .map(c => c.text)
         .join('')
-      
+
       if (!claudeResponse) {
         throw new Error('La IA no devolvió contenido de texto.')
       }
@@ -233,7 +233,7 @@ export async function POST(req: Request) {
       console.warn(`[VALIDACIÓN] Intento de análisis fallido de documento no válido por el usuario: ${user.email}`)
       const isEnglish = isTextEnglish(ensayo)
       return NextResponse.json(
-        { 
+        {
           error: isEnglish
             ? 'The analysis determined that this text does not qualify as an essay, SOP, or motivation letter. Please upload only your application document. || El análisis determinó que este texto no califica como ensayo, SOP o carta de motivación. Por favor, sube únicamente tu documento de postulación.'
             : 'El análisis determinó que este texto no califica como ensayo, SOP o carta de motivación. Por favor, sube únicamente tu documento de postulación.'

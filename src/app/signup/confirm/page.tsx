@@ -14,63 +14,20 @@ export default function ConfirmPage() {
   useEffect(() => {
     console.log('[ConfirmPage] Iniciando monitoreo de verificación...')
 
-    // 1. Escuchar cambios de autenticación locales (por ejemplo, si se inicia sesión en la pestaña)
+    // Escuchar cambios de autenticación locales (por ejemplo, si se inicia sesión en la pestaña al confirmar)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('[ConfirmPage] Cambio de estado de autenticación:', event, session?.user?.email)
       if (event === 'SIGNED_IN' && session) {
         console.log('[ConfirmPage] ¡Usuario autenticado detectado! Limpiando temporales y redirigiendo...')
-        // Limpiamos las credenciales temporales de sesión
         sessionStorage.removeItem('signup_email')
         sessionStorage.removeItem('signup_password')
         router.push('/dashboard?bienvenido=1&nuevo=1&verificado=1')
       }
     })
 
-    // 2. Polling en segundo plano: si hay credenciales en sessionStorage, intentamos iniciar sesión en segundo plano.
-    // Esto se activará automáticamente el segundo en que el usuario confirme su correo en su celular o pestaña.
-    const email = sessionStorage.getItem('signup_email')
-    const password = sessionStorage.getItem('signup_password')
-    console.log('[ConfirmPage] Credenciales recuperadas de sessionStorage:', { 
-      email: email ? email : 'NO ENCONTRADO', 
-      password: password ? '*** (protegido)' : 'NO ENCONTRADO' 
-    })
-
-    let intervalId: NodeJS.Timeout | null = null
-
-    if (email && password) {
-      console.log('[ConfirmPage] Iniciando polling cada 5 segundos en segundo plano...')
-      intervalId = setInterval(async () => {
-        try {
-          console.log('[ConfirmPage] Ejecutando polling: intentando iniciar sesión con Supabase...')
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password
-          })
-
-          if (error) {
-            console.log('[ConfirmPage] Intento de login fallido (esto es normal si el correo aún no ha sido confirmado):', error.message)
-          }
-
-          if (data?.session && !error) {
-            console.log('[ConfirmPage] ¡Inicio de sesión exitoso! Limpiando intervalo y redirigiendo...')
-            // Inicio de sesión exitoso. Limpiamos el intervalo y redirigimos
-            clearInterval(intervalId!)
-            sessionStorage.removeItem('signup_email')
-            sessionStorage.removeItem('signup_password')
-            router.push('/dashboard?bienvenido=1&nuevo=1&verificado=1')
-          }
-        } catch (err) {
-          console.error('[ConfirmPage] Error inesperado durante el polling:', err)
-        }
-      }, 5000)
-    } else {
-      console.warn('[ConfirmPage] ADVERTENCIA: No se encontraron email/password en sessionStorage. El polling en segundo plano no puede iniciarse.')
-    }
-
     return () => {
-      console.log('[ConfirmPage] Limpiando suscripciones e intervalos de confirmación.')
+      console.log('[ConfirmPage] Limpiando suscripción de confirmación.')
       subscription.unsubscribe()
-      if (intervalId) clearInterval(intervalId)
     }
   }, [supabase, router])
 

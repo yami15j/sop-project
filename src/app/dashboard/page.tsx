@@ -45,8 +45,16 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
     console.error('[Dashboard] Error cargando lead:', leadError)
   }
 
+  // Leer créditos extra asignados por el administrador
+  const { data: profileData } = await supabase
+    .from('profiles')
+    .select('creditos_extra')
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  const creditosExtra = profileData?.creditos_extra ?? 0
   const ensayosUsados = ensayos?.length || 0
-  const ensayosRestantes = Math.max(0, 2 - ensayosUsados)
+  const ensayosRestantes = Math.max(0, 2 - ensayosUsados) + creditosExtra
   const selectedEnsayoId = searchParams?.ensayo
   const selectedEnsayo = selectedEnsayoId ? ensayos?.find(e => e.id === selectedEnsayoId) : null
   const vistaTexto = searchParams?.vista === 'texto'
@@ -114,7 +122,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
           {/* Centro: créditos */}
           <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: 'rgba(0,168,232,0.12)', border: '1px solid rgba(0,168,232,0.25)' }}>
             <span className="text-slate-300 text-sm font-medium">Créditos:</span>
-            <span className="text-[#00A8E8] text-sm font-extrabold">{ensayosRestantes} / 2</span>
+            <span className="text-[#00A8E8] text-sm font-extrabold">{ensayosRestantes} / {2 + creditosExtra}</span>
           </div>
 
           {/* Derecha: avatar + logout */}
@@ -163,6 +171,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
             ensayos={ensayos ?? null}
             selectedEnsayoId={selectedEnsayoId}
             ensayosRestantes={ensayosRestantes}
+            creditosExtra={creditosExtra}
           />
 
           {/* ÁREA PRINCIPAL */}
@@ -210,7 +219,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
                                 className="px-3 py-1.5 rounded-lg font-bold transition-all text-xs hover:bg-white/15"
                                 style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}
                               >
-                                {vistaTexto ? '📊 Ver análisis técnico' : '📄 Ver ensayo'}
+                                {vistaTexto ? '📊 Ver análisis IA' : '📄 Ver ensayo'}
                               </Link>
                             )}
                             <Link

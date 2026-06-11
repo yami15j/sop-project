@@ -20,8 +20,8 @@ export async function GET(request: Request) {
   //   - En computadora: va directamente al Dashboard.
   const successRedirect = isResetPassword
     ? `${origin}/reset-password`
-    : isMobile 
-      ? `${origin}/signup/verified-static` 
+    : isMobile
+      ? `${origin}/signup/verified-static`
       : `${origin}/dashboard?bienvenido=1&nuevo=1&verificado=1`
 
   if (code) {
@@ -41,7 +41,7 @@ export async function GET(request: Request) {
   if (!isMobile) {
     const supabase = await createClient()
     const { data: { session } } = await supabase.auth.getSession()
-    
+
     // Si ya existe sesión en este navegador de computadora, lo mandamos directo al dashboard
     if (session) {
       return NextResponse.redirect(`${origin}/dashboard?bienvenido=1&nuevo=1&verificado=1`)

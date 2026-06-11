@@ -3,17 +3,17 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { 
-  ArrowRight, 
-  FileText, 
-  Sparkles, 
-  GraduationCap, 
-  CheckCircle2, 
-  AlertTriangle, 
-  Download, 
-  Globe, 
-  BookOpen, 
-  Cpu, 
+import {
+  ArrowRight,
+  FileText,
+  Sparkles,
+  GraduationCap,
+  CheckCircle2,
+  AlertTriangle,
+  Download,
+  Globe,
+  BookOpen,
+  Cpu,
   ShieldCheck,
   ChevronRight,
   Zap
@@ -22,40 +22,40 @@ import {
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#010618] text-slate-100 font-sans selection:bg-[#00A8E8]/20 selection:text-[#00A8E8] overflow-hidden relative">
-      
+
       {/* 🔮 MESH GRADIENTS & DYNAMIC GLOW BACKGROUNDS */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         {/* Radial Glow Top Right */}
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.15, 1], 
-            opacity: [0.15, 0.25, 0.15] 
+        <motion.div
+          animate={{
+            scale: [1, 1.15, 1],
+            opacity: [0.15, 0.25, 0.15]
           }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-[20%] -right-[10%] w-[80%] h-[80%] bg-[radial-gradient(circle_at_center,rgba(0,168,232,0.3)_0%,transparent_70%)] rounded-full blur-[120px]" 
+          className="absolute -top-[20%] -right-[10%] w-[80%] h-[80%] bg-[radial-gradient(circle_at_center,rgba(0,168,232,0.3)_0%,transparent_70%)] rounded-full blur-[120px]"
         />
         {/* Radial Glow Center Left */}
-        <motion.div 
-          animate={{ 
-            scale: [1.1, 0.95, 1.1], 
-            opacity: [0.15, 0.20, 0.15] 
+        <motion.div
+          animate={{
+            scale: [1.1, 0.95, 1.1],
+            opacity: [0.15, 0.20, 0.15]
           }}
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute top-[20%] -left-[20%] w-[60%] h-[60%] bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.25)_0%,transparent_60%)] rounded-full blur-[100px]" 
+          className="absolute top-[20%] -left-[20%] w-[60%] h-[60%] bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.25)_0%,transparent_60%)] rounded-full blur-[100px]"
         />
         {/* Grid Overlay Line Pattern */}
-        <div 
-          className="absolute inset-0 opacity-[0.03]" 
-          style={{ 
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
             backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)`,
             backgroundSize: '40px 40px'
-          }} 
+          }}
         />
       </div>
 
       {/* 🚀 FLOATING CAPSULE NAVBAR */}
       <div className="w-full fixed top-0 left-0 z-50 px-4 pt-4 sm:pt-6">
-        <motion.nav 
+        <motion.nav
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
@@ -84,14 +84,14 @@ export default function LandingPage() {
 
           {/* Nav Actions */}
           <div className="flex items-center gap-2 sm:gap-4">
-            <Link 
-              href="/login" 
+            <Link
+              href="/login"
               className="px-4 py-2 text-xs sm:text-sm font-extrabold text-slate-300 hover:text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               Iniciar Sesión
             </Link>
-            <Link 
-              href="/login?msg=evaluar" 
+            <Link
+              href="/login?msg=evaluar"
               className="bg-gradient-to-r from-[#00A8E8] to-[#0070b8] hover:from-[#00bfff] hover:to-[#00A8E8] text-white px-4 py-2 sm:px-6 sm:py-2.5 rounded-full text-xs sm:text-sm font-extrabold transition-all shadow-[0_4px_20px_rgba(0,168,232,0.3)] hover:-translate-y-0.5 active:translate-y-0"
             >
               Evaluar Ensayo
@@ -103,7 +103,7 @@ export default function LandingPage() {
       {/* 🌌 HERO SECTION */}
       <section className="relative z-10 min-h-screen flex flex-col justify-center items-center pt-32 pb-16 sm:pb-24 px-4 sm:px-6">
         <div className="w-full max-w-5xl mx-auto text-center relative z-10">
-          
+
           {/* Animated Badge */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -112,7 +112,7 @@ export default function LandingPage() {
             className="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-[#00A8E8]/10 text-[#00A8E8] text-xs font-extrabold border border-[#00A8E8]/20 mb-8 shadow-[0_0_20px_rgba(0,168,232,0.08),inset_0_1px_0_rgba(255,255,255,0.05)] relative group overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-            <Sparkles className="w-3.5 h-3.5 animate-pulse text-[#00A8E8]" /> 
+            <Sparkles className="w-3.5 h-3.5 animate-pulse text-[#00A8E8]" />
             <span>Inteligencia Artificial para Estudiantes</span>
           </motion.div>
 
@@ -144,15 +144,15 @@ export default function LandingPage() {
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
           >
-            <Link 
-              href="/login?msg=evaluar" 
+            <Link
+              href="/login?msg=evaluar"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#00A8E8] to-[#0070b8] hover:from-[#00bfff] hover:to-[#00A8E8] text-white px-8 py-4 rounded-2xl text-sm sm:text-base font-extrabold transition-all shadow-[0_10px_30px_rgba(0,168,232,0.3)] hover:-translate-y-1 active:translate-y-0"
             >
               Evaluar mi ensayo gratis
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </Link>
-            <Link 
-              href="#como-funciona" 
+            <Link
+              href="#como-funciona"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white/[0.03] hover:bg-white/[0.08] text-white px-8 py-4 rounded-2xl text-sm sm:text-base font-extrabold transition-all border border-white/10 shadow-sm hover:-translate-y-1 active:translate-y-0 backdrop-blur-md"
             >
               ¿Cómo funciona?
@@ -165,7 +165,7 @@ export default function LandingPage() {
       {/* ⚙️ CÓMO FUNCIONA */}
       <section id="como-funciona" className="py-24 sm:py-32 px-4 sm:px-6 relative z-20 bg-slate-950/20">
         <div className="max-w-6xl mx-auto">
-          
+
           <div className="text-center mb-16 sm:mb-20">
             <span className="text-[#00A8E8] text-xs font-black tracking-[0.2em] uppercase bg-[#00A8E8]/10 px-3.5 py-1.5 rounded-full border border-[#00A8E8]/20">
               Proceso del Evaluador
@@ -179,7 +179,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            
+
             {/* Step 1 */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -244,19 +244,19 @@ export default function LandingPage() {
           {/* Inner Glow Effects */}
           <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#00A8E8] rounded-full blur-[120px] opacity-20 pointer-events-none group-hover:opacity-30 transition-opacity duration-700" />
           <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-600 rounded-full blur-[120px] opacity-20 pointer-events-none group-hover:opacity-30 transition-opacity duration-700" />
-          
+
           <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#00A8E8]/30 to-transparent" />
 
           <h2 className="text-3xl sm:text-5xl font-black mb-6 tracking-tight text-white relative z-10 leading-tight">
             ¿Listo para estudiar en la universidad de tus sueños?
           </h2>
-          
+
           <p className="text-slate-400 mb-10 text-sm sm:text-lg max-w-2xl mx-auto relative z-10 leading-relaxed">
             Más allá de tus calificaciones, trabajamos en perfeccionar tu historia. Pulir tu carta de motivación es el paso crucial para captar la atención del comité de selección.
           </p>
 
-          <Link 
-            href="/signup" 
+          <Link
+            href="/signup"
             className="inline-flex items-center gap-2.5 bg-gradient-to-r from-[#00A8E8] to-[#0070b8] hover:from-[#00bfff] hover:to-[#00A8E8] text-white px-8 py-4 sm:px-12 sm:py-5 rounded-2xl text-sm sm:text-lg font-black transition-all shadow-[0_10px_40px_rgba(0,168,232,0.4)] hover:-translate-y-1 active:translate-y-0 relative z-10"
           >
             Crear mi cuenta gratuita

@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SOP Reviewer
 
-## Getting Started
+**SOP Reviewer** es una plataforma web para la revisión automatizada de cartas de motivación y ensayos de postulación (*Statements of Purpose*) a becas internacionales. Fue construida para **La Comunidad del Intercambio**.
 
-First, run the development server:
+El sistema utiliza **Claude AI** (Anthropic) para analizar los ensayos con base en 10 criterios académicos y devolver puntajes detallados, sugerencias interlineales interactivas y reportes exportables en PDF.
+
+---
+
+## Inicio rápido
+
+### 1. Instalar dependencias
+
+```bash
+cd app-ensayos
+npm install
+```
+
+### 2. Configurar las variables de entorno
+
+Crea el archivo `.env.local` en la raíz del proyecto con el siguiente contenido:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL="tu_supabase_project_url"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="tu_supabase_anon_key"
+SUPABASE_SERVICE_ROLE_KEY="tu_supabase_service_role_key"
+ANTHROPIC_API_KEY="tu_anthropic_api_key"
+RESEND_API_KEY="tu_resend_api_key"
+
+```
+
+### 3. Levantar el servidor
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre `http://localhost:3000` en el navegador.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 4. Compilar para producción
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run start
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Comandos disponibles
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Comando | Descripción |
+| :--- | :--- |
+| `npm run dev` | Servidor de desarrollo en `http://localhost:3000` |
+| `npm run build` | Compilación optimizada para producción |
+| `npm run start` | Servidor en producción (requiere `build` previo) |
+| `npm run lint` | Análisis de código con ESLint |
+| `node prueba.js` | Test de conexión con Claude API |
+| `node test-status-values.js` | Validación de estados y RLS en Supabase |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Stack principal
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Next.js 16.2.4 con App Router
+- React 19.2.4 y Tailwind CSS v4
+- Supabase (PostgreSQL, Auth, Storage)
+- Anthropic SDK — Claude Opus 4.7 y Sonnet 4.6
+- Resend para correos transaccionales
+- Framer Motion v12
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Documentación del proyecto
+
+| Archivo | Contenido |
+| :--- | :--- |
+| [DOCUMENTACION.md](./DOCUMENTACION.md) | Documentación técnica completa: módulos, base de datos, integración con IA, roles y troubleshooting |
+| [PENDIENTES.md](./PENDIENTES.md) | Todo lo que falta implementar antes del lanzamiento |
+
+---
+
+## Estructura general
+
+```text
+app-ensayos/
+├── src/
+│   ├── app/
+│   │   ├── admin/        # Panel de administración
+│   │   ├── api/          # Endpoints: analyze, translate, auth
+│   │   ├── dashboard/    # Panel del estudiante
+│   │   └── ...           # Páginas de autenticación
+│   ├── components/       # Componentes React reutilizables
+│   └── utils/            # Clientes Supabase SSR
+├── prompt_v1.md          # Rúbrica oficial del prompt de Claude
+├── .env.local            # Variables de entorno (no subir al repositorio)
+└── package.json
+```
+
+---
+
+*SOP Reviewer — La Comunidad del Intercambio.*

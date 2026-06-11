@@ -10,9 +10,10 @@ interface FeedbackCardProps {
   ensayoOriginal?: string
   becaObjetivo?: string
   paisDestino?: string
+  isAdminMode?: boolean
 }
 
-export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOriginal, becaObjetivo, paisDestino }: FeedbackCardProps) {
+export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOriginal, becaObjetivo, paisDestino, isAdminMode = false }: FeedbackCardProps) {
   const [isDownloading, setIsDownloading] = useState(false)
   const [showSpanish, setShowSpanish] = useState(false)
 
@@ -36,16 +37,22 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
 
     // Reemplazar jerga técnica académica (jargon) por términos elegantes en español
     text = text
-      .replace(/Hook de apertura/gi, 'Introducción impactante')
-      .replace(/\bHook\b/gi, 'Introducción impactante')
+      .replace(/Hook de apertura/gi, 'Introducción Impactante')
+      .replace(/\bHook\b/gi, 'Introducción Impactante')
       .replace(/Fit con el programa/gi, 'Conexión académica')
       .replace(/Fit con programa/gi, 'Conexión académica')
       .replace(/Fit académico/gi, 'Conexión académica')
       .replace(/\bFit\b/gi, 'Conexión académica')
-      .replace(/Momentos A-ha/gi, 'Transformación personal')
-      .replace(/Momentos Aha/gi, 'Transformación personal')
-      .replace(/Momento Aha/gi, 'Transformación personal')
-      .replace(/Plan de retorno/gi, 'Impacto a futuro')
+      .replace(/Conexión con la Universidad/gi, 'Conexión académica')
+      .replace(/Conexión con la universidad/gi, 'Conexión académica')
+      .replace(/Momentos A-ha/gi, 'Transformación Personal')
+      .replace(/Momentos Aha/gi, 'Transformación Personal')
+      .replace(/Momento Aha/gi, 'Transformación Personal')
+      .replace(/Plan de retorno/gi, 'Impacto a Futuro')
+      .replace(/Diferenciación/gi, 'Perfil Único')
+      .replace(/Extensión/gi, 'Estructura y Narrativa')
+      .replace(/Mostrar no decir/gi, 'Evidencia de Logros')
+      .replace(/Estructura y cierre/gi, 'Estructura y Narrativa')
 
     return text
   }
@@ -62,7 +69,7 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
   const rawMejoras = mejorasStr.split('\n').filter(line => line.trim().startsWith('1.') || line.trim().startsWith('2.') || line.trim().startsWith('3.'))
 
   const fortalezas = rawFortalezas.map(f => getParsedItem(f, showSpanish))
-  
+
   let parsedMejoras = rawMejoras.map(m => getParsedItem(m, showSpanish))
   if (puntajeEstimado === 10) {
     parsedMejoras = []
@@ -93,13 +100,13 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
     const paragraphs = normalizedText.split(/\n+/).filter(p => p.trim().length > 0)
 
     return (
-      <div className="w-full space-y-6">
+      <div className={`w-full ${isAdminMode ? 'space-y-3' : 'space-y-6'}`}>
         {paragraphs.map((paragraph, pIndex) => {
           // Separar cada párrafo buscando la etiqueta XML o el formato antiguo [SUGERENCIA:...]
           const parts = paragraph.split(/(<texto>[\s\S]*?<\/texto>\s*<sugerencia>[\s\S]*?<\/sugerencia>|(?:\{[\s\S]*?\})?\s*\[SUGERENCIA:[\s\S]*?\])/gi)
 
           return (
-            <div key={pIndex} className="leading-relaxed sm:leading-[1.9] text-[13px] sm:text-[15px] text-slate-700 text-justify">
+            <div key={pIndex} className={`leading-relaxed text-slate-700 text-justify ${isAdminMode ? 'text-xs leading-normal' : 'sm:leading-[1.9] text-[13px] sm:text-[15px]'}`}>
               {parts.map((part, index) => {
                 const xmlMatch = part.match(/<texto>([\s\S]*?)<\/texto>\s*<sugerencia>([\s\S]*?)<\/sugerencia>/i)
                 const matchWithBraces = part.match(/\{([\s\S]*?)\}\s*\[SUGERENCIA:([\s\S]*?)\]/i)
@@ -124,7 +131,7 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
                           {/* Borde izquierdo muy fino */}
                           <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-indigo-300/80"></span>
 
-                          <span className="p-2.5 sm:p-3 flex items-start gap-2.5">
+                          <span className={`flex items-start gap-2.5 ${isAdminMode ? 'p-2' : 'p-2.5 sm:p-3'}`}>
                             <span className="flex-shrink-0 mt-0.5">
                               <span className="w-5 h-5 rounded-md bg-indigo-50/80 flex items-center justify-center">
                                 <Lightbulb className="w-3 h-3 text-indigo-500" />
@@ -138,7 +145,7 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
                                 </strong>
                               </span>
 
-                              <span className="block text-[11px] sm:text-[12px] leading-relaxed text-slate-600">
+                              <span className={`block leading-relaxed text-slate-600 ${isAdminMode ? 'text-[10px] sm:text-[11px]' : 'text-[11px] sm:text-[12px]'}`}>
                                 {getContentForLang(suggestion.replace(/\]$/, ''), showSpanish)}
                               </span>
                             </span>
@@ -193,58 +200,61 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
     <div className="mt-2 text-slate-800">
 
       {/* ── INTERFAZ DEL DASHBOARD ── */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 pb-6 border-b border-slate-100 gap-4">
+      <div className={`flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-100 gap-4 ${isAdminMode ? 'mb-4 pb-3' : 'mb-8 pb-6'}`}>
         <div className="w-full md:w-auto">
           <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-            <h4 className="text-xl font-bold text-[#010B2B]">Resultados del Análisis Técnico</h4>
-            
+            <h4 className={`font-bold text-[#010B2B] ${isAdminMode ? 'text-sm' : 'text-xl'}`}>Resultados del Análisis IA</h4>
+
             {/* SWITCH DESLIZANTE DE TRADUCCIÓN PREMIUM */}
             {isBilingual && (
-              <div className="relative inline-flex items-center p-0.5 bg-[#F1F5F9] border border-slate-200/50 rounded-xl select-none w-[180px] h-[34px] shadow-inner shrink-0 self-start sm:self-auto transition-all duration-300">
+              <div className={`relative inline-flex items-center p-0.5 bg-[#F1F5F9] border border-slate-200/50 rounded-xl select-none shadow-inner shrink-0 self-start sm:self-auto transition-all duration-300 ${isAdminMode ? 'w-[150px] h-[28px]' : 'w-[180px] h-[34px]'}`}>
                 {/* Deslizador de fondo */}
-                <div 
-                  className="absolute top-0.5 bottom-0.5 w-[85px] bg-white border border-slate-200/25 rounded-lg shadow-sm transition-all duration-300 ease-out"
+                <div
+                  className="absolute top-0.5 bottom-0.5 bg-white border border-slate-200/25 rounded-lg shadow-sm transition-all duration-300 ease-out"
                   style={{
-                    left: showSpanish ? '91px' : '4px'
+                    width: isAdminMode ? '70px' : '85px',
+                    left: showSpanish ? (isAdminMode ? '76px' : '91px') : '4px'
                   }}
                 />
-                
+
                 {/* Botón Original */}
                 <button
                   type="button"
                   onClick={() => setShowSpanish(false)}
-                  className={`relative z-10 w-[85px] h-full text-center text-[9px] font-extrabold uppercase tracking-wider transition-colors duration-200 flex items-center justify-center gap-1 focus:outline-none ${!showSpanish ? 'text-[#010B2B]' : 'text-slate-400 hover:text-slate-600'}`}
+                  className={`relative z-10 text-center font-extrabold uppercase tracking-wider transition-colors duration-200 flex items-center justify-center gap-1 focus:outline-none ${isAdminMode ? 'w-[70px] text-[8px]' : 'w-[85px] text-[9px]'} ${!showSpanish ? 'text-[#010B2B]' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                   🌐 Original
                 </button>
-                
+
                 {/* Botón Español */}
                 <button
                   type="button"
                   onClick={() => setShowSpanish(true)}
-                  className={`relative z-10 w-[85px] h-full text-center text-[9px] font-extrabold uppercase tracking-wider transition-colors duration-200 flex items-center justify-center gap-1 focus:outline-none ${showSpanish ? 'text-[#010B2B]' : 'text-slate-400 hover:text-slate-600'}`}
+                  className={`relative z-10 text-center font-extrabold uppercase tracking-wider transition-colors duration-200 flex items-center justify-center gap-1 focus:outline-none ${isAdminMode ? 'w-[70px] text-[8px]' : 'w-[85px] text-[9px]'} ${showSpanish ? 'text-[#010B2B]' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                   🇪🇸 Español
                 </button>
               </div>
             )}
           </div>
-          <p className="text-sm text-slate-500 mt-1">
-            {isBilingual && showSpanish 
-              ? 'Evaluado según los criterios de tu beca (Traducción en Español).' 
-              : 'Evaluado según los criterios de tu beca objetivo.'}
-          </p>
+          {!isAdminMode && (
+            <p className="text-sm text-slate-500 mt-1">
+              {isBilingual && showSpanish
+                ? 'Evaluado según los criterios de tu beca (Traducción en Español).'
+                : 'Evaluado según los criterios de tu beca objetivo.'}
+            </p>
+          )}
         </div>
         {/* Diseño Minimalista Premium (Solo Tipografía) */}
         <div className="flex flex-col items-end justify-center shrink-0">
           <div className="flex items-baseline gap-0.5">
-            <span className={`text-2xl font-black tracking-tight leading-none ${puntajeEstimado >= 8 ? "text-emerald-500" :
+            <span className={`font-black tracking-tight leading-none ${isAdminMode ? 'text-lg' : 'text-2xl'} ${puntajeEstimado >= 8 ? "text-emerald-500" :
               puntajeEstimado >= 6 ? "text-[#00A8E8]" :
                 "text-orange-500"
               }`}>
               {puntajeEstimado}
             </span>
-            <span className="text-sm font-bold text-slate-400">/10</span>
+            <span className={`font-bold text-slate-400 ${isAdminMode ? 'text-xs' : 'text-sm'}`}>/10</span>
           </div>
           <div className={`mt-1 px-1.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${puntajeEstimado >= 8 ? "bg-emerald-50 text-emerald-600" :
             puntajeEstimado >= 6 ? "bg-blue-50 text-blue-600" :
@@ -255,16 +265,16 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-4 mb-6">
+      <div className={`grid gap-4 ${isAdminMode ? 'grid-cols-1 mb-4' : 'md:grid-cols-2 mb-6'}`}>
         <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
-          <div className="bg-emerald-50/50 border-b border-slate-100 px-4 py-2 flex items-center gap-2">
+          <div className={`bg-emerald-50/50 border-b border-slate-100 flex items-center gap-2 ${isAdminMode ? 'py-1 px-3' : 'py-2 px-4'}`}>
             <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-            <h5 className="font-bold text-[11px] text-emerald-900 uppercase tracking-widest">Tus Fortalezas</h5>
+            <h5 className={`font-bold text-emerald-900 uppercase tracking-widest ${isAdminMode ? 'text-[9px]' : 'text-[11px]'}`}>Tus Fortalezas</h5>
           </div>
-          <div className="p-3.5 sm:p-4">
+          <div className={isAdminMode ? 'p-2.5' : 'p-3.5 sm:p-4'}>
             <ul className="space-y-2">
               {fortalezas.map((f, i) => (
-                <li key={i} className="flex items-start gap-2.5 text-[12px] sm:text-[13px] text-slate-700">
+                <li key={i} className={`flex items-start gap-2.5 text-slate-700 ${isAdminMode ? 'text-[11px]' : 'text-[12px] sm:text-[13px]'}`}>
                   <span className="w-4 h-4 flex-shrink-0 flex items-center justify-center rounded-full bg-emerald-100 text-emerald-700 text-[9px] font-bold mt-0.5">{i + 1}</span>
                   <span className="leading-snug">{f.replace(/^\d+\.\s*/, '')}</span>
                 </li>
@@ -274,28 +284,28 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
         </div>
 
         <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
-          <div className={`${puntajeEstimado === 10 ? 'bg-indigo-50/50' : 'bg-orange-50/50'} border-b border-slate-100 px-4 py-2 flex items-center gap-2`}>
+          <div className={`${puntajeEstimado === 10 ? 'bg-indigo-50/50' : 'bg-orange-50/50'} border-b border-slate-100 flex items-center gap-2 ${isAdminMode ? 'py-1 px-3' : 'py-2 px-4'}`}>
             {puntajeEstimado === 10 ? (
               <CheckCircle className="w-3.5 h-3.5 text-indigo-600" />
             ) : (
               <AlertTriangle className="w-3.5 h-3.5 text-orange-600" />
             )}
-            <h5 className={`font-bold text-[11px] ${puntajeEstimado === 10 ? 'text-indigo-950' : 'text-orange-900'} uppercase tracking-widest`}>Áreas de Mejora</h5>
+            <h5 className={`font-bold uppercase tracking-widest ${puntajeEstimado === 10 ? 'text-indigo-950' : 'text-orange-900'} ${isAdminMode ? 'text-[9px]' : 'text-[11px]'}`}>Áreas de Mejora</h5>
           </div>
-          <div className="p-3.5 sm:p-4">
+          <div className={isAdminMode ? 'p-2.5' : 'p-3.5 sm:p-4'}>
             {puntajeEstimado === 10 ? (
-              <div className="flex items-start gap-2.5 text-[12px] sm:text-[13px] text-slate-700">
+              <div className={`flex items-start gap-2.5 text-slate-700 ${isAdminMode ? 'text-[11px]' : 'text-[12px] sm:text-[13px]'}`}>
                 <span className="w-4 h-4 flex-shrink-0 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-700 text-[9px] font-bold mt-0.5">✓</span>
                 <span className="leading-snug font-medium italic">
-                  {isBilingual 
-                    ? (showSpanish ? "¡Excelente! Tu ensayo es excepcional, no requiere áreas de mejora." : "Excellent! Your essay is exceptional, no areas of improvement needed.") 
+                  {isBilingual
+                    ? (showSpanish ? "¡Excelente! Tu ensayo es excepcional, no requiere áreas de mejora." : "Excellent! Your essay is exceptional, no areas of improvement needed.")
                     : "¡Excelente! Tu ensayo es excepcional, no requiere áreas de mejora."}
                 </span>
               </div>
             ) : (
               <ul className="space-y-2">
                 {mejoras.map((m, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-[12px] sm:text-[13px] text-slate-700">
+                  <li key={i} className={`flex items-start gap-2.5 text-slate-700 ${isAdminMode ? 'text-[11px]' : 'text-[12px] sm:text-[13px]'}`}>
                     <span className="w-4 h-4 flex-shrink-0 flex items-center justify-center rounded-full bg-orange-100 text-orange-700 text-[9px] font-bold mt-0.5">{i + 1}</span>
                     <span className="leading-snug">{m.replace(/^\d+\.\s*/, '')}</span>
                   </li>
@@ -307,33 +317,35 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
       </div>
 
       {annotatedSection && (
-        <div className="mt-12 group border-t border-slate-100 pt-10">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 shadow-sm border border-orange-100">
-              <Lightbulb className="w-5 h-5" />
+        <div className={`group border-t border-slate-100 ${isAdminMode ? 'mt-6 pt-5' : 'mt-12 pt-10'}`}>
+          <div className={`flex items-center gap-3 ${isAdminMode ? 'mb-4' : 'mb-8'}`}>
+            <div className={`rounded-full bg-orange-50 flex items-center justify-center text-orange-600 shadow-sm border border-orange-100 ${isAdminMode ? 'w-7 h-7' : 'w-10 h-10'}`}>
+              <Lightbulb className={isAdminMode ? 'w-3.5 h-3.5' : 'w-5 h-5'} />
             </div>
             <div>
-              <h3 className="font-bold text-[#010B2B] text-lg">Ensayo con Sugerencias</h3>
-              <p className="text-xs text-slate-400 font-medium">Pasa el cursor sobre el texto resaltado para ver los consejos de mejora.</p>
+              <h3 className={`font-bold text-[#010B2B] ${isAdminMode ? 'text-sm' : 'text-lg'}`}>Ensayo con Sugerencias</h3>
+              {!isAdminMode && (
+                <p className="text-xs text-slate-400 font-medium">Pasa el cursor sobre el texto resaltado para ver los consejos de mejora.</p>
+              )}
             </div>
           </div>
 
-          <div className="bg-[#F8FAFC] rounded-2xl sm:rounded-[32px] px-3 py-5 sm:p-8 md:p-12 border border-slate-100/50 shadow-inner">
+          <div className={`bg-[#F8FAFC] border border-slate-100/50 shadow-inner ${isAdminMode ? 'rounded-xl p-3' : 'rounded-2xl sm:rounded-[32px] px-3 py-5 sm:p-8 md:p-12'}`}>
             {renderAnnotatedEssay(annotatedSection)}
           </div>
         </div>
       )}
 
       {recomendacionStr && recomendacionStr.trim().length > 0 && (
-        <div className="mt-10 mb-8 bg-gradient-to-br from-indigo-50/80 to-white border border-indigo-100 rounded-2xl p-4 sm:p-6 md:p-8 shadow-sm relative overflow-hidden">
+        <div className={`bg-gradient-to-br from-indigo-50/80 to-white border border-indigo-100 rounded-2xl shadow-sm relative overflow-hidden ${isAdminMode ? 'mt-6 mb-4 p-3.5' : 'mt-10 mb-8 p-4 sm:p-6 md:p-8'}`}>
           <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-500 rounded-l-2xl"></div>
           <div className="flex flex-col md:flex-row items-center md:items-start gap-5 relative z-10 text-center md:text-left">
-            <div className="flex-shrink-0 w-12 h-12 bg-white rounded-full flex items-center justify-center text-indigo-600 shadow-md border border-indigo-50">
-              <Lightbulb className="w-6 h-6" />
+            <div className={`flex-shrink-0 bg-white rounded-full flex items-center justify-center text-indigo-650 shadow-md border border-indigo-50 ${isAdminMode ? 'w-8 h-8' : 'w-12 h-12'}`}>
+              <Lightbulb className={isAdminMode ? 'w-4 h-4' : 'w-6 h-6'} />
             </div>
             <div className="flex-1">
-              <h4 className="text-[#010B2B] font-bold text-lg mb-2">Recomendación del Asistente</h4>
-              <p className="text-slate-600 text-[13px] sm:text-[15px] leading-relaxed transition-all duration-300">
+              <h4 className={`text-[#010B2B] font-bold mb-2 ${isAdminMode ? 'text-xs' : 'text-lg'}`}>Recomendación del Asistente</h4>
+              <p className={`leading-relaxed transition-all duration-300 text-slate-650 ${isAdminMode ? 'text-[11px]' : 'text-[13px] sm:text-[15px]'}`}>
                 {getContentForLang(recomendacionStr.replace(/RECOMENDACIÓN FINAL:/i, '').trim(), showSpanish)}
               </p>
             </div>
@@ -341,15 +353,17 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t border-slate-100">
-        <Link href="/dashboard?vista=mentoria" className="w-full sm:w-auto bg-[#010B2B] hover:bg-[#02134a] text-white font-semibold py-3 px-6 rounded-xl text-sm transition-colors text-center shadow-lg">
-          ⭐ Trabajar mi ensayo con un Mentor
-        </Link>
-        <button onClick={handleDownloadPDF} disabled={isDownloading} className="w-full sm:w-auto flex items-center justify-center gap-2 border-2 border-[#00A8E8] hover:bg-[#00A8E8] text-[#00A8E8] hover:text-white font-bold py-3 px-6 rounded-xl text-sm transition-all disabled:opacity-60">
-          {isDownloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-          {isDownloading ? 'Generando PDF...' : 'Descargar Ensayo'}
-        </button>
-      </div>
+      {!isAdminMode && (
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t border-slate-100">
+          <Link href="/dashboard?vista=mentoria" className="w-full sm:w-auto bg-[#010B2B] hover:bg-[#02134a] text-white font-semibold py-3 px-6 rounded-xl text-sm transition-colors text-center shadow-lg">
+            ⭐ Trabajar mi ensayo con un Mentor
+          </Link>
+          <button onClick={handleDownloadPDF} disabled={isDownloading} className="w-full sm:w-auto flex items-center justify-center gap-2 border-2 border-[#00A8E8] hover:bg-[#00A8E8] text-[#00A8E8] hover:text-white font-bold py-3 px-6 rounded-xl text-sm transition-all disabled:opacity-60">
+            {isDownloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+            {isDownloading ? 'Generando PDF...' : 'Descargar Ensayo'}
+          </button>
+        </div>
+      )}
 
       {/* ── TEMPLATE DEL ENSAYO ORIGINAL PARA PDF (Oculto) ── */}
       <div style={{ position: 'absolute', left: '-9999px', top: 0, zIndex: -100, pointerEvents: 'none' }}>

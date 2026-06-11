@@ -16,12 +16,14 @@ interface DashboardSidebarProps {
   ensayos: Ensayo[] | null
   selectedEnsayoId?: string
   ensayosRestantes: number
+  creditosExtra?: number
 }
 
-export default function DashboardSidebar({ ensayos, selectedEnsayoId, ensayosRestantes }: DashboardSidebarProps) {
+export default function DashboardSidebar({ ensayos, selectedEnsayoId, ensayosRestantes, creditosExtra = 0 }: DashboardSidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const creditPercent = (ensayosRestantes / 2) * 100
+  const totalCreditos = 2 + creditosExtra
+  const creditPercent = totalCreditos > 0 ? Math.min(100, (ensayosRestantes / totalCreditos) * 100) : 0
   const creditColor = ensayosRestantes > 0 ? '#0f172a' : '#f97316'
 
   const sidebarContent = (
@@ -57,7 +59,7 @@ export default function DashboardSidebar({ ensayos, selectedEnsayoId, ensayosRes
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-slate-600 uppercase tracking-wide">Créditos</span>
           </div>
-          <span className="text-sm font-extrabold" style={{ color: '#0f172a' }}>{ensayosRestantes} / 2</span>
+          <span className="text-sm font-extrabold" style={{ color: '#0f172a' }}>{ensayosRestantes} / {totalCreditos}</span>
         </div>
         {/* Barra de progreso */}
         <div className="h-2 rounded-full overflow-hidden" style={{ background: '#f1f5f9' }}>
@@ -68,6 +70,7 @@ export default function DashboardSidebar({ ensayos, selectedEnsayoId, ensayosRes
         </div>
         <p className="text-xs text-slate-400 font-medium mt-2">
           {ensayosRestantes > 0 ? `${ensayosRestantes} análisis disponible${ensayosRestantes > 1 ? 's' : ''}` : 'Sin créditos. Solicita mentoría ↓'}
+          {creditosExtra > 0 && <span className="ml-1 text-emerald-500 font-bold">(+{creditosExtra} del admin)</span>}
         </p>
       </div>
 
@@ -98,12 +101,12 @@ export default function DashboardSidebar({ ensayos, selectedEnsayoId, ensayosRes
                   className="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all"
                   style={
                     isSelected
-                      ? { 
-                          background: 'linear-gradient(135deg, #1e293b, #0f172a)', 
-                          color: 'white', 
-                          boxShadow: '0 4px 16px rgba(0,0,0,0.06)', 
-                          border: '1px solid rgba(255,255,255,0.12)',
-                        }
+                      ? {
+                        background: 'linear-gradient(135deg, #1e293b, #0f172a)',
+                        color: 'white',
+                        boxShadow: '0 4px 16px rgba(0,0,0,0.06)',
+                        border: '1px solid rgba(255,255,255,0.12)',
+                      }
                       : { background: 'white', color: '#475569', border: '1px solid rgba(0, 0, 0, 0.08)', boxShadow: '0 1px 4px rgba(0,0,0,0.02)' }
                   }
                 >
@@ -121,12 +124,12 @@ export default function DashboardSidebar({ ensayos, selectedEnsayoId, ensayosRes
                   </div>
                   {typeof puntaje === 'number' ? (
                     <span className="text-xs font-extrabold px-2.5 py-1 rounded-lg flex-shrink-0 transition-all"
-                      style={{ 
-                        background: isSelected 
-                          ? 'rgba(255,255,255,0.08)' 
-                          : puntaje >= 8 ? '#f0fdf4' : puntaje >= 5 ? '#fff7ed' : '#fef2f2', 
-                        color: isSelected 
-                          ? '#ffffff' 
+                      style={{
+                        background: isSelected
+                          ? 'rgba(255,255,255,0.08)'
+                          : puntaje >= 8 ? '#f0fdf4' : puntaje >= 5 ? '#fff7ed' : '#fef2f2',
+                        color: isSelected
+                          ? '#ffffff'
                           : puntaje >= 8 ? '#16a34a' : puntaje >= 5 ? '#ea580c' : '#dc2626',
                         border: isSelected ? '1px solid rgba(255,255,255,0.15)' : `1px solid ${puntaje >= 8 ? '#dcfce7' : puntaje >= 5 ? '#ffedd5' : '#fee2e2'}`
                       }}>
