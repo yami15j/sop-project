@@ -265,28 +265,28 @@ export default function AnalyzeForm({ ensayosRestantes = 2, hasLead = false }: A
     width: '100%',
     background: focusedField === field ? '#ffffff' : '#f8fafc',
     border: `1.5px solid ${focusedField === field ? '#00A8E8' : '#e2e8f0'}`,
-    borderRadius: '14px',
-    padding: '14px 16px',
-    fontSize: '14px',
+    borderRadius: '10px',
+    padding: '8px 12px',
+    fontSize: '13.5px',
     color: '#0f172a',
     outline: 'none',
     transition: 'all 0.2s ease',
-    boxShadow: focusedField === field ? '0 0 0 3px rgba(0,168,232,0.12)' : 'none',
+    boxShadow: focusedField === field ? '0 0 0 3px rgba(0,168,232,0.08)' : 'none',
   })
 
   return (
-    <div className="rounded-3xl overflow-hidden" style={{ background: 'white', border: '1px solid rgba(0, 0, 0, 0.08)', boxShadow: '0 8px 40px rgba(0,0,0,0.04)' }}>
+    <div className="rounded-2xl overflow-hidden" style={{ background: 'white', border: '1px solid rgba(0, 0, 0, 0.08)', boxShadow: '0 8px 40px rgba(0,0,0,0.04)' }}>
 
       {/* Header del form */}
-      <div className="px-5 sm:px-8 py-5 sm:py-6 flex items-center gap-3" style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+      <div className="px-4 sm:px-5 py-3 flex items-center gap-2" style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
         <div>
-          <h3 className="text-base font-extrabold text-white leading-none">Datos de tu Aplicación</h3>
-          <p className="text-xs text-slate-300 font-medium mt-1.5">Completa los campos para un análisis preciso</p>
+          <h3 className="text-[15px] font-extrabold text-white leading-none">Datos de tu Aplicación</h3>
+          <p className="text-[11px] text-slate-300 font-medium mt-1">Completa los campos para un análisis preciso</p>
         </div>
       </div>
 
 
-      <div className="p-5 sm:p-8">
+      <div className="p-4 sm:p-5">
 
         {/* Success */}
         {success && (
@@ -296,15 +296,15 @@ export default function AnalyzeForm({ ensayosRestantes = 2, hasLead = false }: A
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
 
           {/* Grid de campos superiores */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
 
             {/* País */}
             <div>
-              <label className="flex items-center gap-1.5 text-xs text-slate-500 uppercase font-bold mb-2 tracking-wide">
-                <Globe className="w-3.5 h-3.5" />
+              <label className="flex items-center gap-1.5 text-[11px] text-slate-500 uppercase font-bold mb-1 tracking-wide">
+                <Globe className="w-3 h-3 text-slate-400" />
                 País de Destino
               </label>
               <input
@@ -329,8 +329,8 @@ export default function AnalyzeForm({ ensayosRestantes = 2, hasLead = false }: A
 
             {/* Beca */}
             <div>
-              <label className="flex items-center gap-1.5 text-xs text-slate-500 uppercase font-bold mb-2 tracking-wide">
-                <BookOpen className="w-3.5 h-3.5" />
+              <label className="flex items-center gap-1.5 text-[11px] text-slate-500 uppercase font-bold mb-1 tracking-wide">
+                <BookOpen className="w-3 h-3 text-slate-400" />
                 Beca a la que aplicas
               </label>
               <div className="relative">
@@ -398,7 +398,7 @@ export default function AnalyzeForm({ ensayosRestantes = 2, hasLead = false }: A
 
           {/* Textarea del ensayo */}
           <div>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center justify-between mb-2.5">
+            <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center justify-between mb-2">
               <label className="flex items-center gap-1.5 text-xs text-slate-500 uppercase font-bold tracking-wide">
                 <AlignLeft className="w-3.5 h-3.5" />
                 Tu Ensayo / Personal Statement
@@ -583,7 +583,7 @@ export default function AnalyzeForm({ ensayosRestantes = 2, hasLead = false }: A
               required
               disabled={isAnalyzing}
               spellCheck="false"
-              rows={16}
+              rows={15}
               value={ensayoText}
               onChange={(e) => {
                 setEnsayoText(e.target.value)
@@ -598,8 +598,8 @@ export default function AnalyzeForm({ ensayosRestantes = 2, hasLead = false }: A
               style={{
                 ...inputStyle('textarea'),
                 resize: 'vertical',
-                minHeight: '300px',
-                lineHeight: '1.7',
+                minHeight: '340px',
+                lineHeight: '1.6',
                 textAlign: 'justify'
               }}
               onFocus={() => setFocusedField('textarea')}
@@ -634,7 +634,7 @@ export default function AnalyzeForm({ ensayosRestantes = 2, hasLead = false }: A
           <button
             type="submit"
             disabled={isAnalyzing || isOverLimit || isEmpty}
-            className="w-full py-4 rounded-xl font-extrabold text-base flex items-center justify-center gap-2.5 transition-all"
+            className="w-full py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all"
             style={{
               background: isAnalyzing || isOverLimit || isEmpty
                 ? '#e2e8f0'
@@ -645,19 +645,19 @@ export default function AnalyzeForm({ ensayosRestantes = 2, hasLead = false }: A
                 : 'white',
               boxShadow: isAnalyzing || isOverLimit || isEmpty
                 ? 'none'
-                : '0 8px 32px rgba(0,168,232,0.3)',
+                : '0 6px 20px rgba(0,168,232,0.2)',
               cursor: isAnalyzing || isOverLimit || isEmpty ? 'not-allowed' : 'pointer',
             }}
           >
             {isAnalyzing ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin" />
+                <Loader2 className="w-4.5 h-4.5 animate-spin" />
                 <span className="animate-pulse">{loadingMessages[loadingMessageIndex]}</span>
               </>
             ) : (
               <>
-                <Sparkles className="w-5 h-5" />
-                Analizar con Inteligencia Artificial
+                <Sparkles className="w-4.5 h-4.5" />
+                Analizar Ensayo
               </>
             )}
           </button>

@@ -94,7 +94,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
 
       {/* ── HEADER ── */}
       <header className="sticky top-0 z-40" style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', borderBottom: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 4px 32px rgba(0,0,0,0.15)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-[86px] flex justify-between items-center gap-4 pt-2.5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-[76px] flex justify-between items-center gap-4 pt-1.5">
 
           {/* Logo + Título */}
           <div className="flex items-center gap-3">
@@ -120,24 +120,24 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
           </div>
 
           {/* Centro: créditos */}
-          <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: 'rgba(0,168,232,0.12)', border: '1px solid rgba(0,168,232,0.25)' }}>
-            <span className="text-slate-300 text-sm font-medium">Créditos:</span>
-            <span className="text-[#00A8E8] text-sm font-extrabold">{ensayosRestantes} / {2 + creditosExtra}</span>
+          <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: 'rgba(0,168,232,0.12)', border: '1px solid rgba(0,168,232,0.25)' }}>
+            <span className="text-slate-300 text-xs font-medium">Créditos:</span>
+            <span className="text-[#00A8E8] text-xs font-extrabold">{ensayosRestantes} / {2 + creditosExtra}</span>
           </div>
 
           {/* Derecha: avatar + logout */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2.5 sm:px-3 sm:py-1.5 rounded-full sm:bg-white/5 sm:border sm:border-white/10">
+            <div className="flex items-center gap-2 sm:px-2.5 sm:py-1 rounded-full sm:bg-white/5 sm:border sm:border-white/10">
               {user?.user_metadata?.avatar_url ? (
-                <img src={user.user_metadata.avatar_url} alt="Foto" className="w-8 h-8 rounded-full object-cover border-2 border-[#00A8E8]/40" />
+                <img src={user.user_metadata.avatar_url} alt="Foto" className="w-7 h-7 rounded-full object-cover border-2 border-[#00A8E8]/40" />
               ) : (
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-extrabold text-sm flex-shrink-0" style={{ background: 'linear-gradient(135deg, #00A8E8, #0060a0)' }}>
+                <div className="w-7 h-7 rounded-full flex items-center justify-center text-white font-extrabold text-[13px] flex-shrink-0" style={{ background: 'linear-gradient(135deg, #00A8E8, #0060a0)' }}>
                   {avatarInitial}
                 </div>
               )}
               <div className="hidden sm:flex flex-col">
-                <span className="text-white font-bold text-sm leading-none">{displayName}</span>
-                <span className="text-slate-400 text-xs leading-none mt-0.5 truncate max-w-[130px]">{user?.email}</span>
+                <span className="text-white font-bold text-xs leading-none">{displayName}</span>
+                <span className="text-slate-400 text-[10px] leading-none mt-0.5 truncate max-w-[130px]">{user?.email}</span>
               </div>
             </div>
 
@@ -163,8 +163,8 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
 
 
       {/* ── MAIN CONTENT ── */}
-      <div className="max-w-7xl mx-auto px-4 pt-6 pb-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="max-w-7xl mx-auto px-4 pt-5 pb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
 
           {/* SIDEBAR */}
           <DashboardSidebar
@@ -183,11 +183,11 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
               if (selectedEnsayo) {
                 return (
                   /* ─ VISTA SEGÚN PARÁMETRO ─ */
-                  <div className="rounded-3xl overflow-hidden" style={{ background: 'white', border: '1px solid rgba(0, 0, 0, 0.08)', boxShadow: '0 8px 40px rgba(0,0,0,0.04)' }}>
+                  <div className="rounded-2xl overflow-hidden" style={{ background: 'white', border: '1px solid rgba(0, 0, 0, 0.08)', boxShadow: '0 8px 40px rgba(0,0,0,0.04)' }}>
                     {/* Header */}
-                    <div className="px-3.5 sm:px-8 py-5 sm:py-6 flex flex-col md:flex-row justify-between md:items-center gap-4" style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                    <div className="px-4 sm:px-6 py-4 sm:py-4.5 flex flex-col md:flex-row justify-between md:items-center gap-4" style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
                       <div>
-                        <h2 className="text-2xl font-extrabold text-white mb-2">
+                        <h2 className="text-xl sm:text-2xl font-extrabold text-white mb-1.5">
                           {vistaTexto ? '📄 Mi Ensayo' : 'Resultados del Análisis'}
                         </h2>
                         <div className="flex flex-wrap items-center gap-2 text-sm">
@@ -240,7 +240,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
                       </div>
                     </div>
 
-                    <div className="p-3.5 sm:p-8 md:p-10">
+                    <div className="p-4 sm:p-6 md:p-8">
                       {vistaTexto ? (
                         /* ── VISTA SOLO TEXTO DEL ENSAYO ── */
                         <div>
@@ -327,9 +327,9 @@ export default async function DashboardPage(props: { searchParams: Promise<{ ens
               return (
                 /* ─ VISTA NUEVO ENSAYO ─ */
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="mb-6">
-                    <h2 className="text-2xl font-extrabold text-[#010B2B]">Nuevo Análisis</h2>
-                    <p className="text-slate-500 mt-1">Pega tu carta de motivación y obtén feedback instantáneo.</p>
+                  <div className="mb-4">
+                    <h2 className="text-xl font-extrabold text-[#010B2B]">Nuevo Análisis</h2>
+                    <p className="text-xs text-slate-500 mt-0.5">Pega tu carta de motivación y obtén feedback instantáneo.</p>
                   </div>
                   <AnalyzeForm ensayosRestantes={ensayosRestantes} hasLead={!!lead} />
                 </div>

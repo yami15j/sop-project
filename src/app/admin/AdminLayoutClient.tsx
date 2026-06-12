@@ -298,16 +298,7 @@ export default function AdminLayoutClient({ email, nombre: nombreInicial, telefo
                 <span>Mi Perfil</span>
               </Link>
 
-              <Link
-                href="/dashboard"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setShowSidebarProfileMenu(false)}
-                className="w-full px-3 py-2.5 rounded-xl flex items-center gap-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-all text-left cursor-pointer"
-              >
-                <GraduationCap className="w-4 h-4 text-[#00A8E8]" />
-                <span>Vista Estudiante</span>
-              </Link>
+
 
               <div className="h-[1px] bg-slate-100 my-1" />
               <button

@@ -38,7 +38,7 @@ export default function PasswordInput({
         placeholder={placeholder}
         required={required}
         onChange={onChange}
-        className={`w-full rounded-2xl border border-white/20 bg-slate-950/30 ${hasLeftIcon ? 'pl-11' : 'pl-3.5 sm:pl-4'} pr-11 py-4 text-sm sm:text-base text-white placeholder-slate-500 outline-none transition-all duration-300 hover:bg-slate-950/50 hover:border-white/30 focus:bg-slate-950/80 focus:border-[#00A8E8] focus:ring-4 focus:ring-[#00A8E8]/10 ${className}`}
+        className={`w-full rounded-2xl border border-white/20 bg-slate-950/30 ${hasLeftIcon ? 'pl-11' : 'pl-3.5 sm:pl-4'} pr-11 text-sm sm:text-base text-white placeholder-slate-500 outline-none transition-all duration-300 hover:bg-slate-950/50 hover:border-white/30 focus:bg-slate-950/80 focus:border-[#00A8E8] focus:ring-4 focus:ring-[#00A8E8]/10 ${className.includes('py-') ? '' : 'py-3'} ${className}`}
       />
       <button
         type="button"

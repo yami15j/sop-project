@@ -200,14 +200,14 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
     <div className="mt-2 text-slate-800">
 
       {/* ── INTERFAZ DEL DASHBOARD ── */}
-      <div className={`flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-100 gap-4 ${isAdminMode ? 'mb-4 pb-3' : 'mb-8 pb-6'}`}>
+      <div className={`flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-100 gap-3 ${isAdminMode ? 'mb-4 pb-3' : 'mb-5 pb-4.5'}`}>
         <div className="w-full md:w-auto">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-            <h4 className={`font-bold text-[#010B2B] ${isAdminMode ? 'text-sm' : 'text-xl'}`}>Resultados del Análisis IA</h4>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2.5">
+            <h4 className={`font-bold text-[#010B2B] ${isAdminMode ? 'text-sm' : 'text-lg'}`}>Resultados del Análisis IA</h4>
 
             {/* SWITCH DESLIZANTE DE TRADUCCIÓN PREMIUM */}
             {isBilingual && (
-              <div className={`relative inline-flex items-center p-0.5 bg-[#F1F5F9] border border-slate-200/50 rounded-xl select-none shadow-inner shrink-0 self-start sm:self-auto transition-all duration-300 ${isAdminMode ? 'w-[150px] h-[28px]' : 'w-[180px] h-[34px]'}`}>
+              <div className={`relative inline-flex items-center p-0.5 bg-[#F1F5F9] border border-slate-200/50 rounded-xl select-none shadow-inner shrink-0 self-start sm:self-auto transition-all duration-300 ${isAdminMode ? 'w-[150px] h-[28px]' : 'w-[170px] h-[32px]'}`}>
                 {/* Deslizador de fondo */}
                 <div
                   className="absolute top-0.5 bottom-0.5 bg-white border border-slate-200/25 rounded-lg shadow-sm transition-all duration-300 ease-out"
@@ -265,13 +265,13 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
         </div>
       </div>
 
-      <div className={`grid gap-4 ${isAdminMode ? 'grid-cols-1 mb-4' : 'md:grid-cols-2 mb-6'}`}>
-        <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
-          <div className={`bg-emerald-50/50 border-b border-slate-100 flex items-center gap-2 ${isAdminMode ? 'py-1 px-3' : 'py-2 px-4'}`}>
+      <div className={`grid gap-3.5 ${isAdminMode ? 'grid-cols-1 mb-4' : 'md:grid-cols-2 mb-5'}`}>
+        <div className="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm">
+          <div className={`bg-emerald-50/50 border-b border-slate-100 flex items-center gap-2 ${isAdminMode ? 'py-1 px-3' : 'py-1.5 px-3.5'}`}>
             <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-            <h5 className={`font-bold text-emerald-900 uppercase tracking-widest ${isAdminMode ? 'text-[9px]' : 'text-[11px]'}`}>Tus Fortalezas</h5>
+            <h5 className={`font-bold text-emerald-900 uppercase tracking-widest ${isAdminMode ? 'text-[9px]' : 'text-[10px]'}`}>Tus Fortalezas</h5>
           </div>
-          <div className={isAdminMode ? 'p-2.5' : 'p-3.5 sm:p-4'}>
+          <div className={isAdminMode ? 'p-2.5' : 'p-3 sm:p-3.5'}>
             <ul className="space-y-2">
               {fortalezas.map((f, i) => (
                 <li key={i} className={`flex items-start gap-2.5 text-slate-700 ${isAdminMode ? 'text-[11px]' : 'text-[12px] sm:text-[13px]'}`}>
@@ -283,16 +283,16 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
           </div>
         </div>
 
-        <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
-          <div className={`${puntajeEstimado === 10 ? 'bg-indigo-50/50' : 'bg-orange-50/50'} border-b border-slate-100 flex items-center gap-2 ${isAdminMode ? 'py-1 px-3' : 'py-2 px-4'}`}>
+        <div className="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm">
+          <div className={`${puntajeEstimado === 10 ? 'bg-indigo-50/50' : 'bg-orange-50/50'} border-b border-slate-100 flex items-center gap-2 ${isAdminMode ? 'py-1 px-3' : 'py-1.5 px-3.5'}`}>
             {puntajeEstimado === 10 ? (
               <CheckCircle className="w-3.5 h-3.5 text-indigo-600" />
             ) : (
               <AlertTriangle className="w-3.5 h-3.5 text-orange-600" />
             )}
-            <h5 className={`font-bold uppercase tracking-widest ${puntajeEstimado === 10 ? 'text-indigo-950' : 'text-orange-900'} ${isAdminMode ? 'text-[9px]' : 'text-[11px]'}`}>Áreas de Mejora</h5>
+            <h5 className={`font-bold uppercase tracking-widest ${puntajeEstimado === 10 ? 'text-indigo-950' : 'text-orange-900'} ${isAdminMode ? 'text-[9px]' : 'text-[10px]'}`}>Áreas de Mejora</h5>
           </div>
-          <div className={isAdminMode ? 'p-2.5' : 'p-3.5 sm:p-4'}>
+          <div className={isAdminMode ? 'p-2.5' : 'p-3 sm:p-3.5'}>
             {puntajeEstimado === 10 ? (
               <div className={`flex items-start gap-2.5 text-slate-700 ${isAdminMode ? 'text-[11px]' : 'text-[12px] sm:text-[13px]'}`}>
                 <span className="w-4 h-4 flex-shrink-0 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-700 text-[9px] font-bold mt-0.5">✓</span>
@@ -317,34 +317,34 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
       </div>
 
       {annotatedSection && (
-        <div className={`group border-t border-slate-100 ${isAdminMode ? 'mt-6 pt-5' : 'mt-12 pt-10'}`}>
-          <div className={`flex items-center gap-3 ${isAdminMode ? 'mb-4' : 'mb-8'}`}>
-            <div className={`rounded-full bg-orange-50 flex items-center justify-center text-orange-600 shadow-sm border border-orange-100 ${isAdminMode ? 'w-7 h-7' : 'w-10 h-10'}`}>
-              <Lightbulb className={isAdminMode ? 'w-3.5 h-3.5' : 'w-5 h-5'} />
+        <div className={`group border-t border-slate-100 ${isAdminMode ? 'mt-5 pt-4' : 'mt-8 pt-6'}`}>
+          <div className={`flex items-center gap-2.5 ${isAdminMode ? 'mb-3' : 'mb-4'}`}>
+            <div className={`rounded-full bg-orange-50 flex items-center justify-center text-orange-600 shadow-sm border border-orange-100 ${isAdminMode ? 'w-7 h-7' : 'w-9 h-9'}`}>
+              <Lightbulb className={isAdminMode ? 'w-3.5 h-3.5' : 'w-4.5 h-4.5'} />
             </div>
             <div>
-              <h3 className={`font-bold text-[#010B2B] ${isAdminMode ? 'text-sm' : 'text-lg'}`}>Ensayo con Sugerencias</h3>
+              <h3 className={`font-bold text-[#010B2B] ${isAdminMode ? 'text-sm' : 'text-base'}`}>Ensayo con Sugerencias</h3>
               {!isAdminMode && (
-                <p className="text-xs text-slate-400 font-medium">Pasa el cursor sobre el texto resaltado para ver los consejos de mejora.</p>
+                <p className="text-[11px] text-slate-400 font-medium">Pasa el cursor sobre el texto resaltado para ver los consejos de mejora.</p>
               )}
             </div>
           </div>
 
-          <div className={`bg-[#F8FAFC] border border-slate-100/50 shadow-inner ${isAdminMode ? 'rounded-xl p-3' : 'rounded-2xl sm:rounded-[32px] px-3 py-5 sm:p-8 md:p-12'}`}>
+          <div className={`bg-[#F8FAFC] border border-slate-100/50 shadow-inner ${isAdminMode ? 'rounded-xl p-3' : 'rounded-xl px-3 py-4 sm:p-6 md:p-8'}`}>
             {renderAnnotatedEssay(annotatedSection)}
           </div>
         </div>
       )}
 
       {recomendacionStr && recomendacionStr.trim().length > 0 && (
-        <div className={`bg-gradient-to-br from-indigo-50/80 to-white border border-indigo-100 rounded-2xl shadow-sm relative overflow-hidden ${isAdminMode ? 'mt-6 mb-4 p-3.5' : 'mt-10 mb-8 p-4 sm:p-6 md:p-8'}`}>
-          <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-500 rounded-l-2xl"></div>
-          <div className="flex flex-col md:flex-row items-center md:items-start gap-5 relative z-10 text-center md:text-left">
-            <div className={`flex-shrink-0 bg-white rounded-full flex items-center justify-center text-indigo-650 shadow-md border border-indigo-50 ${isAdminMode ? 'w-8 h-8' : 'w-12 h-12'}`}>
-              <Lightbulb className={isAdminMode ? 'w-4 h-4' : 'w-6 h-6'} />
+        <div className={`bg-gradient-to-br from-indigo-50/80 to-white border border-indigo-100 rounded-xl shadow-sm relative overflow-hidden ${isAdminMode ? 'mt-5 mb-4 p-3.5' : 'mt-6 mb-5 p-4 sm:p-5 md:p-6'}`}>
+          <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-500 rounded-l-xl"></div>
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-4 relative z-10 text-center md:text-left">
+            <div className={`flex-shrink-0 bg-white rounded-full flex items-center justify-center text-indigo-650 shadow-md border border-indigo-50 ${isAdminMode ? 'w-8 h-8' : 'w-10 h-10'}`}>
+              <Lightbulb className={isAdminMode ? 'w-4 h-4' : 'w-5 h-5'} />
             </div>
             <div className="flex-1">
-              <h4 className={`text-[#010B2B] font-bold mb-2 ${isAdminMode ? 'text-xs' : 'text-lg'}`}>Recomendación del Asistente</h4>
+              <h4 className={`text-[#010B2B] font-bold mb-1.5 ${isAdminMode ? 'text-xs' : 'text-base'}`}>Recomendación del Asistente</h4>
               <p className={`leading-relaxed transition-all duration-300 text-slate-650 ${isAdminMode ? 'text-[11px]' : 'text-[13px] sm:text-[15px]'}`}>
                 {getContentForLang(recomendacionStr.replace(/RECOMENDACIÓN FINAL:/i, '').trim(), showSpanish)}
               </p>
@@ -354,11 +354,11 @@ export default function FeedbackCard({ rawResponse, puntajeEstimado, ensayoOrigi
       )}
 
       {!isAdminMode && (
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t border-slate-100">
-          <Link href="/dashboard?vista=mentoria" className="w-full sm:w-auto bg-[#010B2B] hover:bg-[#02134a] text-white font-semibold py-3 px-6 rounded-xl text-sm transition-colors text-center shadow-lg">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4 border-t border-slate-100">
+          <Link href="/dashboard?vista=mentoria" className="w-full sm:w-auto bg-[#010B2B] hover:bg-[#02134a] text-white font-semibold py-2.5 px-5 rounded-lg text-xs sm:text-[13px] transition-colors text-center shadow-lg">
             ⭐ Trabajar mi ensayo con un Mentor
           </Link>
-          <button onClick={handleDownloadPDF} disabled={isDownloading} className="w-full sm:w-auto flex items-center justify-center gap-2 border-2 border-[#00A8E8] hover:bg-[#00A8E8] text-[#00A8E8] hover:text-white font-bold py-3 px-6 rounded-xl text-sm transition-all disabled:opacity-60">
+          <button onClick={handleDownloadPDF} disabled={isDownloading} className="w-full sm:w-auto flex items-center justify-center gap-2 border-2 border-[#00A8E8] hover:bg-[#00A8E8] text-[#00A8E8] hover:text-white font-bold py-2.5 px-5 rounded-lg text-xs sm:text-[13px] transition-all disabled:opacity-60">
             {isDownloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
             {isDownloading ? 'Generando PDF...' : 'Descargar Ensayo'}
           </button>
